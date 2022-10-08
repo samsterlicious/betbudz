@@ -1,0 +1,20 @@
+<div *ngIf="liveBets$ | async as liveBets" class="center">
+  <div *ngFor="let bet of liveBets" class="bets">
+    <div class="pick">
+      <div>
+        {{ stripDomain(bet.personOne) }}
+      </div>
+      <img width="40" height="40" [src]="getImg(bet.personOneTeam)" />
+    </div>
+    <div class="info">
+      <div class="spread">{{ bet.spread }}</div>
+      <div class="amount">$ {{ bet.amount }}</div>
+    </div>
+    <div class="pick">
+      <div>
+        {{ stripDomain(bet.personTwo) }}
+      </div>
+      <img width="40" height="40" [src]="getImg(bet.personTwoTeam)" />
+    </div>
+  </div>
+</div>

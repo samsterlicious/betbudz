@@ -1,0 +1,12 @@
+<p-menubar [model]="items">
+  <button pButton label="Logout" icon="pi pi-power-off"></button>
+</p-menubar>
+<router-outlet></router-outlet>
+<p-toast position="top-center"></p-toast>
+<div class="spinner" *ngIf="spinner.isSpinning$ | async">
+  <p-progressSpinner></p-progressSpinner>
+</div>
+<p-confirmDialog
+  header="Confirmation"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

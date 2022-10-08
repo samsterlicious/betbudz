@@ -1,0 +1,122 @@
+<div class="main" *ngIf="viewModel$ | async as viewModel">
+  <div class="games">
+    <div class="row">
+      <div class="item">Favorite</div>
+      <div class="item">Underdog</div>
+    </div>
+    <div *ngFor="let event of viewModel.events">
+      <ng-container *ngIf="getFavorite(event) as favorite">
+        <ng-container *ngIf="getUnderdog(event) as underdog">
+          <div class="event-wrap">
+            <div class="event">
+              <div class="competitor">
+                <form class="form">
+                  <div
+                    class="team"
+                    [class.team-selected]="
+                      showinputMap.get(favorite.abbreviation)
+                    "
+                    (click)="
+                      clickedTeam(favorite, underdog, event.shortName, event)
+                    "
+                  >
+                    <img width="30" [src]="favorite.logo" />
+                    <div class="team-info">
+                      <div class="info-item">
+                        <b>{{ favorite.abbreviation }}</b>
+                      </div>
+                      <div class="info-item">
+                        {{ favorite.record }}
+                      </div>
+                      <div class="info-item">
+                        {{ favorite.homeAway }}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="p-inputgroup"
+                    *ngIf="viewModel.inputMap.get(favorite.abbreviation)"
+                  >
+                    <span class="p-inputgroup-addon">$</span>
+                    <input
+                      [disabled]="isDisabledEvent(event)"
+                      type="number"
+                      pInputText
+                      [name]="favorite.abbreviation"
+                      [ngModel]="
+                        betAmount.get(
+                          favorite.abbreviation + '#' + event.shortName
+                        )
+                      "
+                      (ngModelChange)="
+                        betAmount.set(
+                          favorite.abbreviation + '#' + event.shortName,
+                          $event
+                        )
+                      "
+                    />
+                  </div>
+                </form>
+              </div>
+              <div class="spread">
+                {{ event!.odds.spread }}
+              </div>
+              <div class="competitor">
+                <form>
+                  <div
+                    class="team"
+                    [class.team-selected]="
+                      showinputMap.get(underdog.abbreviation)
+                    "
+                    (click)="
+                      clickedTeam(underdog, favorite, event.shortName, event)
+                    "
+                  >
+                    <img width="30" [src]="underdog.logo" />
+                    <div class="team-info">
+                      <div class="info-item">
+                        <b>{{ underdog.abbreviation }}</b>
+                      </div>
+                      <div class="info-item">
+                        {{ underdog.record }}
+                      </div>
+                      <div class="info-item">
+                        {{ underdog.homeAway }}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="p-inputgroup"
+                    *ngIf="viewModel.inputMap.get(underdog.abbreviation)"
+                  >
+                    <span class="p-inputgroup-addon">$</span>
+                    <input
+                      type="number"
+                      pInputText
+                      [disabled]="isDisabledEvent(event)"
+                      [name]="underdog.abbreviation"
+                      [ngModel]="
+                        betAmount.get(
+                          underdog.abbreviation + '#' + event.shortName
+                        )
+                      "
+                      (ngModelChange)="
+                        betAmount.set(
+                          underdog.abbreviation + '#' + event.shortName,
+                          $event
+                        )
+                      "
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <p-button (onClick)="submit(viewModel)">Submit</p-button>
+</div>
+
+

@@ -1,0 +1,84 @@
+.competitor {
+    flex: 2;
+    
+}
+
+.event {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.spread {
+    padding-top: 15px;
+    text-align: center;
+    width: 35px;
+    font-weight: bold;
+}
+
+.games {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 300px;
+ }
+
+.main {
+    align-items: center;
+   justify-content: center;
+   display: flex;
+   flex-direction: column;
+}
+
+.item {
+    flex: 1;
+    text-align: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: row; 
+    align-items: center
+}
+
+.team {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: row; 
+    background-color: #D3D3D3;
+    border-radius: 25px; 
+    padding: 8px;
+   cursor: pointer;
+}
+
+.team-selected {
+    background-color: #F5ED40;
+}
+
+.disabled-event {
+    background-color: grey;
+}
+
+.team-info{
+    flex: 1;
+    display: flex;
+    flex-direction: column; 
+}
+
+.info-item {
+    flex: 1; 
+}
+
+.record { 
+    margin-left: 10px;
+}
+ 
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.greg {
+    flex: 1
+}
