@@ -27,7 +27,8 @@ import { PrimengModule } from './modules/primeng/primeng.module';
     AuthModule.forRoot({
       clientId: '0ylwHbbehaMjTanFRBgNNfA6cfRYUtCG',
       domain: 'dev-33fncjbn.us.auth0.com',
-      audience: 'https://dev-33fncjbn.us.auth0.com/api/v2/'
+      audience: 'https://dev-33fncjbn.us.auth0.com/api/v2/',
+      cacheLocation: 'localstorage',
     }),
     BrowserModule,
     AppRoutingModule,
