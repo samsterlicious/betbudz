@@ -13,6 +13,8 @@ import { MainComponent } from './components/main/main.component';
 import { OutstandingBetsComponent } from './components/outstanding-bets/outstanding-bets.component';
 import { PrimengModule } from './modules/primeng/primeng.module';
 
+const AUTH_IGNORED_PATHS = ['/home'];
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,6 +31,9 @@ import { PrimengModule } from './modules/primeng/primeng.module';
       domain: 'dev-33fncjbn.us.auth0.com',
       audience: 'https://dev-33fncjbn.us.auth0.com/api/v2/',
       cacheLocation: 'localstorage',
+      skipRedirectCallback: AUTH_IGNORED_PATHS.includes(
+        window.location.pathname
+      ),
     }),
     BrowserModule,
     AppRoutingModule,

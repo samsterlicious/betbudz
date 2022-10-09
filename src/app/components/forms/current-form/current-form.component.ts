@@ -6,10 +6,11 @@ import { BackendService, Pick } from 'src/app/services/backend/backend.service';
 import {
   Competitor,
   EspnEvent,
-  EspnService
+  EspnService,
 } from 'src/app/services/espn.service';
 import { SpinnerService } from 'src/app/services/spinner/spinner.service';
 @Component({
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-current-form',
   templateUrl: './current-form.component.html',
   styleUrls: ['./current-form.component.scss'],
@@ -66,7 +67,11 @@ export class CurrentFormComponent implements OnInit {
     event: EspnEvent
   ) {
     if (!this.isDisabledEvent(event)) {
-      this.showinputMap.set(team.abbreviation, true);
+      if (this.showinputMap.get(team.abbreviation)) {
+        this.showinputMap.set(team.abbreviation, false);
+      } else {
+        this.showinputMap.set(team.abbreviation, true);
+      }
       this.showinputMap.set(other.abbreviation, false);
 
       this.betAmount.set(`${team.abbreviation}#${game}`, '');
@@ -80,6 +85,32 @@ export class CurrentFormComponent implements OnInit {
 
   getUnderdog(event: EspnEvent): Competitor {
     return event.odds.spread > 0 ? event.competitors[0] : event.competitors[1];
+  }
+
+  getTotal(): number {
+    let total = 0;
+    for (const amount of this.betAmount.values()) {
+      total += parseInt(amount);
+    }
+    return total;
+  }
+
+  anyInvalidBets(): boolean {
+    for (const amount of this.betAmount.values()) {
+      try {
+        const dollars = parseInt(amount);
+        console.log('dollars', dollars);
+        if (dollars > 100 || dollars < 1) return true;
+      } catch {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  isValidBet(betAmount?: string) {
+    if (!betAmount) return true;
+    return parseInt(betAmount) > 0.99 && parseInt(betAmount) < 101;
   }
 
   submit(viewModel: ViewModel): void {
@@ -136,11 +167,8 @@ export class CurrentFormComponent implements OnInit {
   }
 
   isDisabledEvent(event: EspnEvent): boolean {
-    console.log(event.date);
-    console.log(event.date <= new Date());
     const date = new Date(event.date);
-    date.setMinutes(date.getMinutes() - 260);
-    return date <= new Date();
+    return date.getTime() <= new Date().getTime();
   }
 }
 

@@ -1,69 +1,78 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService, MenuItem, MessageService, PrimeNGConfig } from 'primeng/api';
+import { AuthService } from '@auth0/auth0-angular';
+import {
+  ConfirmationService,
+  MenuItem,
+  MessageService,
+  PrimeNGConfig,
+} from 'primeng/api';
 import { SpinnerService } from 'src/app/services/spinner/spinner.service';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
-  providers: [ConfirmationService,MessageService],
+  providers: [ConfirmationService, MessageService],
 })
 export class MainComponent implements OnInit {
-  items: MenuItem[];
+  userItems: MenuItem[] = [
+    { label: 'Profile', icon: 'pi pi-fw pi-pencil', routerLink: '/profile' },
+    {
+      label: 'Sign out',
+      command: () => {
+        this.auth.logout();
+      },
+    },
+  ];
 
+  items: MenuItem[] = [
+    {
+      label: 'My Picks',
+      icon: 'pi pi-fw pi-pencil',
+      routerLink: '/forms/current',
+    },
+    {
+      label: 'Bets',
+      icon: 'pi pi-fw pi-dollar',
+      items: [
+        {
+          label: 'Current',
+          routerLink: '/bets/live',
+          icon: 'pi pi-fw pi-heart-fill',
+        },
+        {
+          label: 'Outstanding',
+          icon: 'pi pi-fw pi-exclamation-circle',
+          routerLink: '/bets/outstanding',
+        },
+      ],
+    },
+    {
+      label: 'Reports',
+      icon: 'pi pi-fw pi-calendar',
+      routerLink: '/leaderboard',
+    },
+  ];
   constructor(
     private primengConfig: PrimeNGConfig,
-    public spinner: SpinnerService
+    public spinner: SpinnerService,
+    private auth: AuthService
   ) {
     this.primengConfig.ripple = true;
-    this.items = [
-      {
-        label: 'Forms',
-        icon: 'pi pi-fw pi-pencil',
-        items: [
-          {
-            label: 'Current',
-            routerLink: '/forms/current',
-          },
-          {
-            label: 'Past',
-            icon: 'pi pi-fw pi-align-right',
-          },
-        ],
+    this.auth.user$.subscribe({
+      next: (user) => {
+        if (!user) {
+          this.userItems = [
+            {
+              label: 'Sign In',
+              command: () => {
+                this.auth.loginWithRedirect();
+              },
+            },
+          ];
+        }
       },
-      {
-        label: 'Users',
-        icon: 'pi pi-fw pi-user',
-        items: [
-          {
-            label: 'Search',
-            icon: 'pi pi-fw pi-users',
-            routerLink: '/users/serach',
-          },
-        ],
-      },
-      {
-        label: 'Leaderboard',
-        icon: 'pi pi-fw pi-calendar',
-        routerLink: '/leaderboard',
-      },
-      {
-        label: 'Bets',
-        icon: 'pi pi-fw pi-dollar',
-        items: [
-          {
-            label: 'Live',
-            routerLink: '/bets/live',
-            icon: 'pi pi-fw pi-heart-fill',
-          },
-          {
-            label: 'Outstanding',
-            icon: 'pi pi-fw pi-exclamation-circle',
-            routerLink: '/bets/outstanding'
-          },
-        ],
-      },
-    ];
+    });
   }
 
   ngOnInit(): void {}

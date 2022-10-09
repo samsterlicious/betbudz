@@ -1,6 +1,7 @@
 .competitor {
     flex: 2;
-    
+    display: flex;
+    flex-direction: column;
 }
 
 .event {
@@ -9,8 +10,11 @@
     margin-bottom: 10px;
 }
 
-.spread {
-    padding-top: 15px;
+.spread-height {
+height: 70px;
+} 
+
+.spread { 
     text-align: center;
     width: 35px;
     font-weight: bold;
@@ -73,12 +77,7 @@
 .record { 
     margin-left: 10px;
 }
- 
-.form {
-    display: flex;
-    flex-direction: column;
-}
-
+  
 .greg {
     flex: 1
 }

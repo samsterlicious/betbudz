@@ -1,5 +1,25 @@
-<p-menubar [model]="items">
-  <button pButton label="Logout" icon="pi pi-power-off"></button>
+<p-menubar [model]="items" styleClass="menubar">
+  <ng-template pTemplate="start">
+    <button
+      pButton
+      pRipple
+      label="BetBudz"
+      type="button"
+      icon="pi pi-dollar"
+      class="p-button-rounded p-button-text"
+      routerLink="/home"
+    ></button>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-user"
+      label="&#x25BC;"
+      (click)="menu.toggle($event)"
+    ></button>
+    <p-menu #menu [popup]="true" [model]="userItems"></p-menu>
+  </ng-template>
 </p-menubar>
 <router-outlet></router-outlet>
 <p-toast position="top-center"></p-toast>
