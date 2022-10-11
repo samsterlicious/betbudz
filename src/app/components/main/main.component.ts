@@ -29,7 +29,7 @@ export class MainComponent implements OnInit {
     {
       label: 'My Picks',
       icon: 'pi pi-fw pi-pencil',
-      routerLink: '/forms/current',
+      routerLink: '/bets/current',
     },
     {
       label: 'Bets',

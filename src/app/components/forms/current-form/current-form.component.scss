@@ -1,83 +1,70 @@
 .competitor {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 .event {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
 }
 
 .spread-height {
-height: 70px;
-} 
-
-.spread { 
-    text-align: center;
-    width: 35px;
-    font-weight: bold;
+  height: 70px;
 }
 
-.games {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    width: 300px;
- }
+.spread {
+  text-align: center;
+  font-weight: bold;
+}
 
 .main {
-    align-items: center;
-   justify-content: center;
-   display: flex;
-   flex-direction: column;
-}
-
-.item {
-    flex: 1;
-    text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .row {
-    display: flex;
-    flex-direction: row; 
-    align-items: center
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .team {
-    flex: 1;
-    text-align: center;
-    display: flex;
-    flex-direction: row; 
-    background-color: #D3D3D3;
-    border-radius: 25px; 
-    padding: 8px;
-   cursor: pointer;
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  background-color: #d3d3d3;
+  border-radius: 25px;
+  padding: 8px;
+  cursor: pointer;
 }
 
 .team-selected {
-    background-color: #F5ED40;
+  background-color: #f5ed40;
 }
 
 .disabled-event {
-    background-color: grey;
+  background-color: grey;
 }
 
-.team-info{
-    flex: 1;
-    display: flex;
-    flex-direction: column; 
+.team-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .info-item {
-    flex: 1; 
+  flex: 1;
 }
 
-.record { 
-    margin-left: 10px;
+.record {
+  margin-left: 10px;
 }
-  
+
 .greg {
-    flex: 1
+  flex: 1;
 }

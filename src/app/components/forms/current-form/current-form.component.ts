@@ -1,7 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AuthService, User } from '@auth0/auth0-angular';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { BehaviorSubject, combineLatest, Observable, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  map,
+  mergeMap,
+  Observable,
+  tap,
+} from 'rxjs';
 import { BackendService, Pick } from 'src/app/services/backend/backend.service';
 import {
   Competitor,
@@ -9,18 +16,35 @@ import {
   EspnService,
 } from 'src/app/services/espn.service';
 import { SpinnerService } from 'src/app/services/spinner/spinner.service';
+import { SelectEventEvent } from '../../bets/events/event/event.component';
+import { BetEvent } from '../../bets/events/team/team.component';
 @Component({
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-current-form',
   templateUrl: './current-form.component.html',
   styleUrls: ['./current-form.component.scss'],
 })
 export class CurrentFormComponent implements OnInit {
   email: string = '';
-  betAmount: Map<string, string>;
-  viewModel$: Observable<ViewModel>;
+  betAmount: Map<string, string> = new Map();
+  betAmountSubject = new BehaviorSubject<Map<string, string>>(this.betAmount);
+  betAmount$ = this.betAmountSubject.asObservable();
+
+  showinputMapSubject = new BehaviorSubject<Map<string, boolean>>(new Map());
+  showinputMap$ = this.showinputMapSubject.asObservable();
   showinputMap: Map<string, boolean>;
+
+  viewModel$: Observable<ViewModel>;
   mapSubject: BehaviorSubject<Map<string, boolean>>;
+  totalSubject = new BehaviorSubject<Total>({ amount: 0 });
+  total$ = this.totalSubject.asObservable();
+
+  latestWeek = this.getCurrentWeek();
+  weekSubject = new BehaviorSubject<string>(this.latestWeek);
+  week: SelectItem;
+
+  weeks: SelectItem[];
+
   oldPicks: Pick[] = [];
   constructor(
     private authService: AuthService,
@@ -31,53 +55,60 @@ export class CurrentFormComponent implements OnInit {
     private spinner: SpinnerService
   ) {
     this.showinputMap = new Map();
-    this.betAmount = new Map();
     this.mapSubject = new BehaviorSubject(this.showinputMap);
-    this.spinner.turnOn();
-    this.viewModel$ = combineLatest({
-      events: espnService.getCurrentGames(),
-      inputMap: this.mapSubject.asObservable(),
-      user: this.authService.user$,
-    }).pipe(
-      tap((resp) => {
-        this.email = resp.user?.email!;
-        this.backend
-          .getForm(String(resp.events[0].week), this.email)
-          .subscribe({
-            next: (picks) => {
-              this.oldPicks = picks;
-              for (const pick of picks) {
-                console.log('p', pick);
+
+    this.week = { name: `Week ${this.latestWeek}`, code: this.latestWeek };
+    this.weeks = [
+      { name: 'Week 1', code: '1' },
+      { name: 'Week 2', code: '2' },
+      { name: 'Week 3', code: '3' },
+      { name: 'Week 4', code: '4' },
+      { name: 'Week 5', code: '5' },
+      { name: 'Week 6', code: '6' },
+      { name: 'Week 7', code: '7' },
+      { name: 'Week 8', code: '8' },
+      { name: 'Week 9', code: '9' },
+    ].filter((week) => {
+      const code = parseInt(week.code);
+      return parseInt(this.latestWeek) >= code;
+    });
+
+    this.viewModel$ = this.authService.user$.pipe(
+      mergeMap((user) =>
+        combineLatest({
+          inputMap: this.mapSubject.asObservable(),
+          events: this.weekSubject.asObservable().pipe(
+            tap(() => this.spinner.turnOn()),
+            tap((week) => console.log('weekz', week)),
+            mergeMap((week) =>
+              combineLatest({
+                events: this.espnService.getGamesByWeek(week),
+                picks: this.backend.getForm(week, user!.email!),
+              })
+            ),
+            tap((resp) => {
+              this.oldPicks = resp.picks;
+              let total = 0;
+              this.showinputMap.clear();
+              this.betAmount.clear();
+              for (const pick of resp.picks) {
                 this.showinputMap.set(pick.team, true);
                 this.betAmount.set(`${pick.team}#${pick.game}`, pick.amount);
+                total += parseInt(pick.amount);
               }
+              this.showinputMapSubject.next(this.showinputMap);
+              this.totalSubject.next({ amount: total });
               this.spinner.turnOff();
-            },
-          });
-      })
+            }),
+            map((resp) => resp.events)
+          ),
+          user: this.authService.user$,
+        })
+      )
     );
   }
 
   ngOnInit(): void {}
-
-  clickedTeam(
-    team: Competitor,
-    other: Competitor,
-    game: string,
-    event: EspnEvent
-  ) {
-    if (!this.isDisabledEvent(event)) {
-      if (this.showinputMap.get(team.abbreviation)) {
-        this.showinputMap.set(team.abbreviation, false);
-      } else {
-        this.showinputMap.set(team.abbreviation, true);
-      }
-      this.showinputMap.set(other.abbreviation, false);
-
-      this.betAmount.set(`${team.abbreviation}#${game}`, '');
-      this.betAmount.set(`${other.abbreviation}#${game}`, '');
-    }
-  }
 
   getFavorite(event: EspnEvent): Competitor {
     return event.odds.spread > 0 ? event.competitors[1] : event.competitors[0];
@@ -99,18 +130,12 @@ export class CurrentFormComponent implements OnInit {
     for (const amount of this.betAmount.values()) {
       try {
         const dollars = parseInt(amount);
-        console.log('dollars', dollars);
         if (dollars > 100 || dollars < 1) return true;
       } catch {
         return true;
       }
     }
     return false;
-  }
-
-  isValidBet(betAmount?: string) {
-    if (!betAmount) return true;
-    return parseInt(betAmount) > 0.99 && parseInt(betAmount) < 101;
   }
 
   submit(viewModel: ViewModel): void {
@@ -166,14 +191,57 @@ export class CurrentFormComponent implements OnInit {
     });
   }
 
-  isDisabledEvent(event: EspnEvent): boolean {
-    const date = new Date(event.date);
-    return date.getTime() <= new Date().getTime();
+  setBet(betEvent: BetEvent) {
+    this.betAmount.set(betEvent.key, betEvent.amount);
+    this.betAmountSubject.next(this.betAmount);
+
+    let total = 0;
+    for (const amount of this.betAmount.values()) {
+      if (amount) total += parseInt(amount);
+    }
+    console.log('totla', total);
+    this.totalSubject.next({ amount: total });
+  }
+
+  getCurrentWeek(): string {
+    const startDate = new Date('2022-09-08');
+    const currentDate = new Date();
+    return String(
+      Math.round(
+        Math.round(
+          (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+        ) / 7
+      ) + 1
+    );
+  }
+
+  handleSelectEvent(selectEvent: SelectEventEvent) {
+    this.showinputMap.set(selectEvent.otherTeam, false);
+    if (this.showinputMap.get(selectEvent.team)) {
+      this.showinputMap.set(selectEvent.team, false);
+    } else {
+      this.showinputMap.set(selectEvent.team, true);
+    }
+    this.showinputMapSubject.next(this.showinputMap);
+  }
+
+  handleWeekChange(week: SelectItem) {
+    this.week = week;
+    this.weekSubject.next(week.code);
   }
 }
+
+type SelectItem = {
+  name: string;
+  code: string;
+};
 
 type ViewModel = {
   events: EspnEvent[];
   inputMap: Map<string, boolean>;
   user: User | undefined | null;
+};
+
+type Total = {
+  amount: number;
 };

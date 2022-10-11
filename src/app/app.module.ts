@@ -12,6 +12,8 @@ import { LiveBetsComponent } from './components/live-bets/live-bets.component';
 import { MainComponent } from './components/main/main.component';
 import { OutstandingBetsComponent } from './components/outstanding-bets/outstanding-bets.component';
 import { PrimengModule } from './modules/primeng/primeng.module';
+import { EventComponent } from './components/bets/events/event/event.component';
+import { TeamComponent } from './components/bets/events/team/team.component';
 
 const AUTH_IGNORED_PATHS = ['/home'];
 
@@ -24,6 +26,8 @@ const AUTH_IGNORED_PATHS = ['/home'];
     CurrentFormComponent,
     LiveBetsComponent,
     OutstandingBetsComponent,
+    EventComponent,
+    TeamComponent,
   ],
   imports: [
     AuthModule.forRoot({

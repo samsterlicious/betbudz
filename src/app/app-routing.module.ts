@@ -9,7 +9,7 @@ import { OutstandingBetsComponent } from './components/outstanding-bets/outstand
 
 const routes: Routes = [
   {
-    path: 'forms/current',
+    path: 'bets/current',
     component: CurrentFormComponent,
     canActivate: [AuthGuard],
   },

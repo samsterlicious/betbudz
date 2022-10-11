@@ -1,0 +1,29 @@
+<div>
+  <div class="flex flex-row flex-1 mb-2">
+    <app-team
+      class="flex-1"
+      [betAmount]="betAmount"
+      [event]="event"
+      [selected]="showInputMap.get(favorite.abbreviation)"
+      [team]="favorite"
+      [otherTeam]="underdog"
+      (betEvent)="setBet($event)"
+      (clickedTeamEvent)="clickTeam($event)"
+    ></app-team>
+    <div
+      class="flex flex-column w-4rem text-center justify-content-center font-bold text-lg spread"
+    >
+      {{ event!.odds.spread }}
+    </div>
+    <app-team
+      class="flex-1"
+      [betAmount]="betAmount"
+      [event]="event"
+      [selected]="showInputMap.get(underdog.abbreviation)"
+      [team]="underdog"
+      [otherTeam]="favorite"
+      (betEvent)="setBet($event)"
+      (clickedTeamEvent)="clickTeam($event)"
+    ></app-team>
+  </div>
+</div>

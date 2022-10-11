@@ -1,0 +1,45 @@
+<form class="flex-1 flex flex-column cursor-pointer">
+  <div
+    class="flex-1 flex flex-row border-round-sm surface-200 border-400 border-1 p-2"
+    [class.selected]="selected"
+    [class.disabled]="isDisabled()"
+    (click)="clickedTeam()"
+  >
+    <img
+      width="50"
+      height="50"
+      [src]="getLogo(team.abbreviation)"
+      class="mr-2"
+    />
+    <div class="flex flex-column justify-content-evenly">
+      <div class="md:hidden">
+        <b>{{ team.abbreviation }}</b>
+      </div>
+      <div class="hidden md:inline-flex align-items-end">
+        {{ team.displayName }}
+        <span class="text-sm text-gray-800">&nbsp;({{ team.record }})</span>
+      </div>
+      <div class="text-sm text-gray-800 md:hidden">({{ team.record }})</div>
+      <div class="text-sm text-gray-800">
+        {{ team.homeAway | titlecase }}
+      </div>
+    </div>
+  </div>
+  <div class="p-inputgroup" *ngIf="selected">
+    <span class="p-inputgroup-addon">$</span>
+    <input
+      [disabled]="isDisabled()"
+      type="number"
+      [class.ng-invalid]="!isValidBet()"
+      pInputText
+      [name]="team.abbreviation"
+      [ngModel]="myBetAmount()"
+      (ngModelChange)="handleBetChange($event)"
+      placeholder="Bet Amount"
+    />
+    <span class="p-inputgroup-addon">.00</span>
+  </div>
+  <div class="text-center mt-1" *ngIf="selected && !isValidBet()">
+    <small class="text-red-500">Between $1-$100</small>
+  </div>
+</form>

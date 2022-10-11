@@ -1,167 +1,47 @@
-<div class="main" *ngIf="viewModel$ | async as viewModel">
-  <div class="games">
-    <div class="row">
-      <div class="item">Favorite</div>
-      <div class="item">Underdog</div>
+<div
+  class="flex flex-column justify-content-center align-items-center"
+  *ngIf="viewModel$ | async as viewModel"
+>
+  <div
+    *ngIf="showinputMap$ | async as showInputMap"
+    class="flex flex-column w-11 md:w-5"
+  >
+    <div class="flex-1 mt-2 flex flex-row justify-content-center">
+      <p-dropdown
+        [options]="weeks"
+        [ngModel]="week"
+        optionLabel="name"
+        (ngModelChange)="handleWeekChange($event)"
+      ></p-dropdown>
+    </div>
+    <div class="flex-1 flex flex-row m-4">
+      <div class="flex-1 text-center text-lg font-bold">Favorite</div>
+      <div class="flex-1 text-center text-lg font-bold">Underdog</div>
     </div>
     <div *ngFor="let event of viewModel.events">
       <ng-container *ngIf="getFavorite(event) as favorite">
         <ng-container *ngIf="getUnderdog(event) as underdog">
-          <div class="event-wrap">
-            <div class="event">
-              <div class="competitor">
-                <form class="form">
-                  <div
-                    class="team"
-                    [class.team-selected]="
-                      showinputMap.get(favorite.abbreviation)
-                    "
-                    (click)="
-                      clickedTeam(favorite, underdog, event.shortName, event)
-                    "
-                  >
-                    <img width="50" height="50" [src]="favorite.logo" />
-                    <div class="team-info">
-                      <div class="info-item">
-                        <b>{{ favorite.abbreviation }}</b>
-                      </div>
-                      <div class="info-item text-sm text-gray-800">
-                        ({{ favorite.record }})
-                      </div>
-                      <div class="info-item text-sm text-gray-800">
-                        {{ favorite.homeAway | titlecase }}
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="p-inputgroup mt-1"
-                    *ngIf="viewModel.inputMap.get(favorite.abbreviation)"
-                  >
-                    <span class="p-inputgroup-addon">$</span>
-                    <input
-                      [disabled]="isDisabledEvent(event)"
-                      type="number"
-                      [class.ng-invalid]="
-                        !isValidBet(
-                          betAmount.get(
-                            favorite.abbreviation + '#' + event.shortName
-                          )
-                        )
-                      "
-                      pInputText
-                      [name]="favorite.abbreviation"
-                      [ngModel]="
-                        betAmount.get(
-                          favorite.abbreviation + '#' + event.shortName
-                        )
-                      "
-                      (ngModelChange)="
-                        betAmount.set(
-                          favorite.abbreviation + '#' + event.shortName,
-                          $event
-                        )
-                      "
-                    />
-                  </div>
-                  <div
-                    class="text-center"
-                    *ngIf="
-                      !isValidBet(
-                        betAmount.get(
-                          favorite.abbreviation + '#' + event.shortName
-                        )
-                      )
-                    "
-                  >
-                    <small class="text-red-500">Between $1-$100</small>
-                  </div>
-                </form>
-              </div>
-              <div
-                class="flex align-items-center justify-content-center spread-height"
-              >
-                <span class="text-lg vertical-align-middle spread">
-                  {{ event!.odds.spread }}
-                </span>
-              </div>
-              <div class="competitor">
-                <form>
-                  <div
-                    class="team"
-                    [class.team-selected]="
-                      showinputMap.get(underdog.abbreviation)
-                    "
-                    (click)="
-                      clickedTeam(underdog, favorite, event.shortName, event)
-                    "
-                  >
-                    <img width="50" height="50" [src]="underdog.logo" />
-                    <div class="team-info">
-                      <div class="info-item">
-                        <b>{{ underdog.abbreviation }}</b>
-                      </div>
-                      <div class="info-item text-sm text-gray-800">
-                        ({{ underdog.record }})
-                      </div>
-                      <div class="info-item text-sm text-gray-800">
-                        {{ underdog.homeAway | titlecase }}
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="p-inputgroup mt-1"
-                    *ngIf="viewModel.inputMap.get(underdog.abbreviation)"
-                  >
-                    <span class="p-inputgroup-addon">$</span>
-                    <input
-                      type="number"
-                      [class.ng-invalid]="
-                        !isValidBet(
-                          betAmount.get(
-                            underdog.abbreviation + '#' + event.shortName
-                          )
-                        )
-                      "
-                      pInputText
-                      [disabled]="isDisabledEvent(event)"
-                      [name]="underdog.abbreviation"
-                      [ngModel]="
-                        betAmount.get(
-                          underdog.abbreviation + '#' + event.shortName
-                        )
-                      "
-                      (ngModelChange)="
-                        betAmount.set(
-                          underdog.abbreviation + '#' + event.shortName,
-                          $event
-                        )
-                      "
-                    />
-                  </div>
-                  <div
-                    class="text-center"
-                    *ngIf="
-                      !isValidBet(
-                        betAmount.get(
-                          underdog.abbreviation + '#' + event.shortName
-                        )
-                      )
-                    "
-                  >
-                    <small class="text-red-500">Between $1-$100</small>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
+          <app-event
+            *ngIf="betAmount$ | async as betAmount"
+            [betAmount]="betAmount"
+            [favorite]="favorite"
+            [showInputMap]="showInputMap"
+            [underdog]="underdog"
+            [event]="event"
+            (eventBetEvent)="setBet($event)"
+            (eventSelectEvent)="handleSelectEvent($event)"
+          ></app-event>
         </ng-container>
       </ng-container>
     </div>
   </div>
-  <div class="mb-2 font-bold">
-    Current total: {{ getTotal() | currency: "USD":"symbol" }}
+  <div *ngIf="total$ | async as total" class="mb-2 font-bold">
+    Current total: {{ total.amount | currency: "USD":"symbol" }}
   </div>
-  <p-button [disabled]="anyInvalidBets()" (onClick)="submit(viewModel)"
+  <p-button
+    class="mb-5"
+    [disabled]="anyInvalidBets()"
+    (onClick)="submit(viewModel)"
     >Submit</p-button
   >
 </div>
