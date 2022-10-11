@@ -19,6 +19,12 @@
       <div class="flex-1 text-center text-lg font-bold">Underdog</div>
     </div>
     <div *ngFor="let event of viewModel.events">
+      <div
+        class="mb-2 text-lg text-center"
+        *ngIf="daySeperators.get(event.shortName)"
+      >
+        {{ daySeperators.get(event.shortName) }}
+      </div>
       <ng-container *ngIf="getFavorite(event) as favorite">
         <ng-container *ngIf="getUnderdog(event) as underdog">
           <app-event
@@ -36,7 +42,7 @@
     </div>
   </div>
   <div *ngIf="total$ | async as total" class="mb-2 font-bold">
-    Current total: {{ total.amount | currency: "USD":"symbol" }}
+    Current total: {{ total.amount }}.00
   </div>
   <p-button
     class="mb-5"

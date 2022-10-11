@@ -54,7 +54,7 @@ export class TeamComponent implements OnInit {
   }
 
   isDisabled(): boolean {
-    const date = new Date(this.event.date);
+    const date = this.event.date;
     return date.getTime() <= new Date().getTime();
   }
 
@@ -67,9 +67,8 @@ export class TeamComponent implements OnInit {
   }
 
   handleBetChange(betAmount: any): void {
-    console.log('sa');
     this.betEvent.emit({
-      amount: betAmount,
+      amount: betAmount.replace('/.d*$', ''),
       key: this.team.abbreviation + '#' + this.event.shortName,
     });
   }

@@ -10,15 +10,15 @@ export class EspnService {
 
   constructor(private httpClient: HttpClient) {
     this.weekMap = new Map();
-    this.weekMap.set('1', '20220908-20220911');
-    this.weekMap.set('2', '20220915-20220918');
-    this.weekMap.set('3', '20220922-20220925');
-    this.weekMap.set('4', '20220929-20221002');
-    this.weekMap.set('5', '20221006-20221009');
-    this.weekMap.set('6', '20221013-20221016');
-    this.weekMap.set('7', '20221020-20221023');
-    this.weekMap.set('8', '20221027-20221030');
-    this.weekMap.set('9', '20221103-20221106');
+    this.weekMap.set('1', '20220908-20220912');
+    this.weekMap.set('2', '20220915-20220919');
+    this.weekMap.set('3', '20220922-20220926');
+    this.weekMap.set('4', '20220929-20221003');
+    this.weekMap.set('5', '20221006-20221010');
+    this.weekMap.set('6', '20221013-20221017');
+    this.weekMap.set('7', '20221020-20221024');
+    this.weekMap.set('8', '20221027-20221031');
+    this.weekMap.set('9', '20221103-20221107');
   }
 
   getGamesByWeek(week: string): Observable<EspnEvent[]> {

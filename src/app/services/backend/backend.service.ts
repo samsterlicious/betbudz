@@ -6,95 +6,118 @@ import { mergeMap, Observable, tap } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class BackendService { 
-  constructor(private httpClient: HttpClient, private authService: AuthService) {
-
-  }
-  
+export class BackendService {
+  constructor(
+    private httpClient: HttpClient,
+    private authService: AuthService
+  ) {}
 
   getLeaderboard(): Observable<Bet[]> {
-    return  this.authService.getAccessTokenSilently().pipe(
-      tap(token=>console.log(token)),
-      mergeMap(token=>this.httpClient.get<Bet[]>(
-        'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
-        {
-          headers: {
-            'Authorization': token,
-          },
-          params: {
-            leaderboard: true
+    return this.authService.getAccessTokenSilently().pipe(
+      tap((token) => console.log(token)),
+      mergeMap((token) =>
+        this.httpClient.get<Bet[]>(
+          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
+          {
+            headers: {
+              Authorization: token,
+            },
+            params: {
+              leaderboard: true,
+            },
           }
-        }
-      ) )
-    )
+        )
+      )
+    );
   }
 
-  updateBet(params: {recv?: boolean, sent?:boolean , id: string}): Observable<void> {
-    return  this.authService.getAccessTokenSilently().pipe(
-      mergeMap(token=> this.httpClient.put<void>(
-      'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets', params,
-      {
-        headers: {
-          'Authorization': token,
-        }, 
-      }
-    )))
+  updateBet(params: {
+    recv?: boolean;
+    sent?: boolean;
+    id: string;
+  }): Observable<void> {
+    return this.authService.getAccessTokenSilently().pipe(
+      mergeMap((token) =>
+        this.httpClient.put<void>(
+          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
+          params,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        )
+      )
+    );
   }
 
-  getLiveBets(): Observable<Bet[]> {
-    return  this.authService.getAccessTokenSilently().pipe(
-      mergeMap(token=> this.httpClient.get<Bet[]>(
-      'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
-      {
-        headers: {
-          'Authorization': token,
-        },
-        params: {
-          live: true
-        }
-      }
-    )));
+  getLiveBets(week?: string): Observable<Bet[]> {
+    return this.authService.getAccessTokenSilently().pipe(
+      mergeMap((token) =>
+        this.httpClient.get<Bet[]>(
+          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
+          {
+            headers: {
+              Authorization: token,
+            },
+            params: {
+              live: true,
+              week: '5',
+            },
+          }
+        )
+      )
+    );
   }
 
   getOutstandingBets(): Observable<Bet[]> {
-    return  this.authService.getAccessTokenSilently().pipe(
-      mergeMap(token=> this.httpClient.get<Bet[]>(
-      'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
-      {
-        headers: {
-          'Authorization': token,
-        },
-        params: {
-          outstanding: true
-        }
-      }
-    )));
+    return this.authService.getAccessTokenSilently().pipe(
+      mergeMap((token) =>
+        this.httpClient.get<Bet[]>(
+          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
+          {
+            headers: {
+              Authorization: token,
+            },
+            params: {
+              outstanding: true,
+            },
+          }
+        )
+      )
+    );
   }
 
   getForm(week: string, user: string): Observable<Pick[]> {
-    return  this.authService.getAccessTokenSilently().pipe(
-      mergeMap(token=> this.httpClient.get<Pick[]>(
-      'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/forms',
-      {
-        params: { week, email: user },
-        headers: {
-          'Authorization': token,
-        },
-      }
-    )));
+    return this.authService.getAccessTokenSilently().pipe(
+      mergeMap((token) =>
+        this.httpClient.get<Pick[]>(
+          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/forms',
+          {
+            params: { week, email: user },
+            headers: {
+              Authorization: token,
+            },
+          }
+        )
+      )
+    );
   }
 
   postForm(body: Body): Observable<any> {
-    return  this.authService.getAccessTokenSilently().pipe(
-      mergeMap(token=> this.httpClient.post(
-      'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/forms',
-      body,
-      {
-        headers: {
-          'Authorization': token,
-        },
-      }
-    )));
+    return this.authService.getAccessTokenSilently().pipe(
+      mergeMap((token) =>
+        this.httpClient.post(
+          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/forms',
+          body,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        )
+      )
+    );
   }
 }
 
@@ -118,11 +141,11 @@ export type Bet = {
   personTwoTeam: string;
   spread: string;
   amount: number;
-  winner:string,
-  procd: boolean,
-  recv: boolean,
-  sent: boolean,
-  id: string,
-  game: string,
-  week: string
+  winner: string;
+  procd: boolean;
+  recv: boolean;
+  sent: boolean;
+  id: string;
+  game: string;
+  week: string;
 };

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AuthService, User } from '@auth0/auth0-angular';
+import dateFormat from 'dateformat';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import {
   BehaviorSubject,
@@ -30,6 +31,8 @@ export class CurrentFormComponent implements OnInit {
   betAmountSubject = new BehaviorSubject<Map<string, string>>(this.betAmount);
   betAmount$ = this.betAmountSubject.asObservable();
 
+  daySeperators = new Map<string, string>();
+
   showinputMapSubject = new BehaviorSubject<Map<string, boolean>>(new Map());
   showinputMap$ = this.showinputMapSubject.asObservable();
   showinputMap: Map<string, boolean>;
@@ -39,7 +42,7 @@ export class CurrentFormComponent implements OnInit {
   totalSubject = new BehaviorSubject<Total>({ amount: 0 });
   total$ = this.totalSubject.asObservable();
 
-  latestWeek = this.getCurrentWeek();
+  latestWeek = getCurrentWeek();
   weekSubject = new BehaviorSubject<string>(this.latestWeek);
   week: SelectItem;
 
@@ -58,20 +61,10 @@ export class CurrentFormComponent implements OnInit {
     this.mapSubject = new BehaviorSubject(this.showinputMap);
 
     this.week = { name: `Week ${this.latestWeek}`, code: this.latestWeek };
-    this.weeks = [
-      { name: 'Week 1', code: '1' },
-      { name: 'Week 2', code: '2' },
-      { name: 'Week 3', code: '3' },
-      { name: 'Week 4', code: '4' },
-      { name: 'Week 5', code: '5' },
-      { name: 'Week 6', code: '6' },
-      { name: 'Week 7', code: '7' },
-      { name: 'Week 8', code: '8' },
-      { name: 'Week 9', code: '9' },
-    ].filter((week) => {
-      const code = parseInt(week.code);
-      return parseInt(this.latestWeek) >= code;
-    });
+    this.weeks = [...Array(parseInt(this.latestWeek)).keys()].map((i) => ({
+      code: String(i + 1),
+      name: `Week ${i + 1}`,
+    }));
 
     this.viewModel$ = this.authService.user$.pipe(
       mergeMap((user) =>
@@ -79,10 +72,41 @@ export class CurrentFormComponent implements OnInit {
           inputMap: this.mapSubject.asObservable(),
           events: this.weekSubject.asObservable().pipe(
             tap(() => this.spinner.turnOn()),
-            tap((week) => console.log('weekz', week)),
             mergeMap((week) =>
               combineLatest({
-                events: this.espnService.getGamesByWeek(week),
+                events: this.espnService.getGamesByWeek(week).pipe(
+                  map((events) => {
+                    events = events.map((event) => {
+                      event.date = new Date(event.date);
+                      return event;
+                    });
+
+                    events.sort(
+                      (event1, event2) =>
+                        event1.date.getTime() - event2.date.getTime()
+                    );
+
+                    let previousDate = events[0].date;
+                    this.daySeperators.set(
+                      events[0].shortName,
+                      dateFormat(previousDate, 'dddd, mmmm dS')
+                    );
+                    console.log(events[0], events[1]);
+                    for (let i = 1; i < events.length; i++) {
+                      let event = events[i];
+                      console.log(previousDate, event.date);
+                      if (previousDate.getDay() != event.date.getDay()) {
+                        this.daySeperators.set(
+                          events[i].shortName,
+                          dateFormat(event.date, 'dddd, mmmm dS')
+                        );
+                      }
+                      previousDate = event.date;
+                    }
+                    console.log('last', events[events.length - 1]);
+                    return events;
+                  })
+                ),
                 picks: this.backend.getForm(week, user!.email!),
               })
             ),
@@ -102,7 +126,9 @@ export class CurrentFormComponent implements OnInit {
             }),
             map((resp) => resp.events)
           ),
-          user: this.authService.user$,
+          user: this.authService.user$.pipe(
+            tap((user) => (this.email = user!.email!))
+          ),
         })
       )
     );
@@ -199,20 +225,7 @@ export class CurrentFormComponent implements OnInit {
     for (const amount of this.betAmount.values()) {
       if (amount) total += parseInt(amount);
     }
-    console.log('totla', total);
     this.totalSubject.next({ amount: total });
-  }
-
-  getCurrentWeek(): string {
-    const startDate = new Date('2022-09-08');
-    const currentDate = new Date();
-    return String(
-      Math.round(
-        Math.round(
-          (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-        ) / 7
-      ) + 1
-    );
   }
 
   handleSelectEvent(selectEvent: SelectEventEvent) {
@@ -245,3 +258,15 @@ type ViewModel = {
 type Total = {
   amount: number;
 };
+
+export function getCurrentWeek(): string {
+  const startDate = new Date('2022-09-08');
+  const currentDate = new Date();
+  return String(
+    Math.round(
+      Math.round(
+        (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      ) / 7
+    ) + 1
+  );
+}
