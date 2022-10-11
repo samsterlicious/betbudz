@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { mergeMap, Observable, tap } from 'rxjs';
+import { getCurrentWeek } from 'src/app/components/forms/current-form/current-form.component';
 
 @Injectable({
   providedIn: 'root',
@@ -62,7 +63,7 @@ export class BackendService {
             },
             params: {
               live: true,
-              week: '5',
+              week: getCurrentWeek(),
             },
           }
         )
