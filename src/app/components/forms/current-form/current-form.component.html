@@ -63,6 +63,7 @@
     [(visible)]="viewModel.displaySidebar"
     position="right"
     [modal]="false"
+    (onHide)="turnOffSidebar()"
   >
     <h3 class="text-center">Pick Instructions</h3>
     <ul class="list-disc text-lg">

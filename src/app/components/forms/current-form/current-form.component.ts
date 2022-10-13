@@ -36,6 +36,7 @@ export class CurrentFormComponent implements OnInit {
 
   daySeperators = new Map<string, string>();
 
+  displaySidebar = false;
   displaySidebarSubject = new BehaviorSubject(false);
   displaySidebar$ = this.displaySidebarSubject.asObservable();
 
@@ -268,7 +269,17 @@ export class CurrentFormComponent implements OnInit {
   }
 
   toggleSidebar(): void {
-    this.displaySidebarSubject.next(true);
+    if (this.displaySidebar) {
+      this.turnOffSidebar();
+    } else {
+      this.displaySidebar = true;
+      this.displaySidebarSubject.next(true);
+    }
+  }
+
+  turnOffSidebar(): void {
+    this.displaySidebar = false;
+    this.displaySidebarSubject.next(false);
   }
 }
 
