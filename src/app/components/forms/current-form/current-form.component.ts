@@ -9,7 +9,7 @@ import {
   mergeMap,
   Observable,
   of,
-  Subject,
+  ReplaySubject,
   tap,
 } from 'rxjs';
 import { BackendService, Pick } from 'src/app/services/backend/backend.service';
@@ -55,7 +55,7 @@ export class CurrentFormComponent implements OnInit {
 
   weeks: SelectItem[];
 
-  submitButtonSubject = new Subject<boolean>();
+  submitButtonSubject = new ReplaySubject<boolean>(1);
   submitButton$ = this.submitButtonSubject.asObservable();
 
   lateDay: boolean;
@@ -141,11 +141,11 @@ export class CurrentFormComponent implements OnInit {
               this.spinner.turnOff();
             }),
             map((resp) => resp.events),
-            tap((events) =>
+            tap((events) => {
               this.submitButtonSubject.next(
                 this.latestWeek === String(events[0].week)
-              )
-            )
+              );
+            })
           ),
           user: of(user).pipe(
             tap((user) => {
