@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { AuthService, User } from '@auth0/auth0-angular';
+import { User } from '@auth0/auth0-angular';
 import dateFormat from 'dateformat';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import {
@@ -9,6 +9,7 @@ import {
   mergeMap,
   Observable,
   of,
+  Subject,
   tap,
 } from 'rxjs';
 import { BackendService, Pick } from 'src/app/services/backend/backend.service';
@@ -18,6 +19,7 @@ import {
   EspnService,
 } from 'src/app/services/espn.service';
 import { SpinnerService } from 'src/app/services/spinner/spinner.service';
+import { UserStore } from 'src/app/store/user.store';
 import { SelectEventEvent } from '../../bets/events/event/event.component';
 import { BetEvent } from '../../bets/events/team/team.component';
 @Component({
@@ -34,6 +36,9 @@ export class CurrentFormComponent implements OnInit {
 
   daySeperators = new Map<string, string>();
 
+  displaySidebarSubject = new BehaviorSubject(false);
+  displaySidebar$ = this.displaySidebarSubject.asObservable();
+
   showinputMapSubject = new BehaviorSubject<Map<string, boolean>>(new Map());
   showinputMap$ = this.showinputMapSubject.asObservable();
   showinputMap: Map<string, boolean>;
@@ -49,9 +54,13 @@ export class CurrentFormComponent implements OnInit {
 
   weeks: SelectItem[];
 
+  submitButtonSubject = new Subject<boolean>();
+  submitButton$ = this.submitButtonSubject.asObservable();
+
+  lateDay: boolean;
   oldPicks: Pick[] = [];
   constructor(
-    private authService: AuthService,
+    private userStore: UserStore,
     private backend: BackendService,
     private espnService: EspnService,
     private messageService: MessageService,
@@ -61,16 +70,18 @@ export class CurrentFormComponent implements OnInit {
     this.showinputMap = new Map();
     this.mapSubject = new BehaviorSubject(this.showinputMap);
 
+    this.lateDay = new Date().getDay() >= 6;
     this.week = { name: `Week ${this.latestWeek}`, code: this.latestWeek };
     this.weeks = [...Array(parseInt(this.latestWeek)).keys()].map((i) => ({
       code: String(i + 1),
       name: `Week ${i + 1}`,
     }));
 
-    this.viewModel$ = this.authService.user$.pipe(
+    this.viewModel$ = this.userStore.user$.pipe(
       tap((user) => console.log('uesrz', user)),
       mergeMap((user) =>
         combineLatest({
+          displaySidebar: this.displaySidebar$,
           inputMap: this.mapSubject
             .asObservable()
             .pipe(tap(() => console.log('inputmap'))),
@@ -128,7 +139,12 @@ export class CurrentFormComponent implements OnInit {
               this.totalSubject.next({ amount: total });
               this.spinner.turnOff();
             }),
-            map((resp) => resp.events)
+            map((resp) => resp.events),
+            tap((events) =>
+              this.submitButtonSubject.next(
+                this.latestWeek === String(events[0].week)
+              )
+            )
           ),
           user: of(user).pipe(
             tap((user) => {
@@ -250,6 +266,10 @@ export class CurrentFormComponent implements OnInit {
     this.week = week;
     this.weekSubject.next(week.code);
   }
+
+  toggleSidebar(): void {
+    this.displaySidebarSubject.next(true);
+  }
 }
 
 type SelectItem = {
@@ -258,6 +278,7 @@ type SelectItem = {
 };
 
 type ViewModel = {
+  displaySidebar: boolean;
   events: EspnEvent[];
   inputMap: Map<string, boolean>;
   user: User | undefined | null;

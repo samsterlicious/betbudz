@@ -55,7 +55,10 @@ export class TeamComponent implements OnInit {
 
   isDisabled(): boolean {
     const date = this.event.date;
-    return date.getTime() <= new Date().getTime();
+    const currentDate = new Date();
+    if (date.getDay() === 4 && currentDate.getDay() >= 5) return true;
+    if (date.getDay() > 4 && currentDate.getDay() >= 6) return true;
+    return false;
   }
 
   isValidBet(): boolean {
@@ -67,10 +70,12 @@ export class TeamComponent implements OnInit {
   }
 
   handleBetChange(betAmount: any): void {
-    this.betEvent.emit({
-      amount: betAmount,
-      key: this.team.abbreviation + '#' + this.event.shortName,
-    });
+    if (!this.isDisabled()) {
+      this.betEvent.emit({
+        amount: betAmount,
+        key: this.team.abbreviation + '#' + this.event.shortName,
+      });
+    }
   }
 
   myBetAmount(): string {

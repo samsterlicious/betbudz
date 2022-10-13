@@ -8,11 +8,19 @@
   >
     <div class="flex-1 mt-2 flex flex-row justify-content-center">
       <p-dropdown
+        class="flex-1"
         [options]="weeks"
         [ngModel]="week"
         optionLabel="name"
         (ngModelChange)="handleWeekChange($event)"
       ></p-dropdown>
+      <p-button
+        (click)="toggleSidebar()"
+        class="align-self-end"
+        label="Instructions"
+        icon="pi pi-info-circle"
+        styleClass="p-button-sm"
+      ></p-button>
     </div>
     <div class="flex-1 flex flex-row m-4">
       <div class="flex-1 text-center text-lg font-bold">Favorite</div>
@@ -45,9 +53,34 @@
     Current total: {{ total.amount }}.00
   </div>
   <p-button
+    *ngIf="submitButton$ | async"
     class="mb-5"
-    [disabled]="anyInvalidBets()"
+    [disabled]="anyInvalidBets() || lateDay"
     (onClick)="submit(viewModel)"
     >Submit</p-button
   >
+  <p-sidebar
+    [(visible)]="viewModel.displaySidebar"
+    position="left"
+    [modal]="false"
+  >
+    <h3 class="text-center">Pick Instructions</h3>
+    <ul class="list-disc">
+      <li>
+        Select teams you would like to bet on by Wednesday 11:59 PM PST for the
+        Thursday night game, and Friday 11:59 PM PST for all others.
+      </li>
+      <li>
+        After selecting the team, enter the amount below that you would like to
+        wager.
+      </li>
+      <li>
+        We'll pair you with others betting on the opposite side of your pick.
+      </li>
+      <li>If there is no opposite better, your bet will not be filled.</li>
+      <li>
+        Hit the "submit" button at the bottom of the page to save your bets.
+      </li>
+    </ul>
+  </p-sidebar>
 </div>
