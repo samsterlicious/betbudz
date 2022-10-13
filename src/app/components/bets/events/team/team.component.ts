@@ -68,7 +68,7 @@ export class TeamComponent implements OnInit {
 
   handleBetChange(betAmount: any): void {
     this.betEvent.emit({
-      amount: betAmount.replace('/.d*$', ''),
+      amount: betAmount,
       key: this.team.abbreviation + '#' + this.event.shortName,
     });
   }

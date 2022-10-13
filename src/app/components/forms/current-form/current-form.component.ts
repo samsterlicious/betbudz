@@ -8,6 +8,7 @@ import {
   map,
   mergeMap,
   Observable,
+  of,
   tap,
 } from 'rxjs';
 import { BackendService, Pick } from 'src/app/services/backend/backend.service';
@@ -67,9 +68,12 @@ export class CurrentFormComponent implements OnInit {
     }));
 
     this.viewModel$ = this.authService.user$.pipe(
+      tap((user) => console.log('uesrz', user)),
       mergeMap((user) =>
         combineLatest({
-          inputMap: this.mapSubject.asObservable(),
+          inputMap: this.mapSubject
+            .asObservable()
+            .pipe(tap(() => console.log('inputmap'))),
           events: this.weekSubject.asObservable().pipe(
             tap(() => this.spinner.turnOn()),
             mergeMap((week) =>
@@ -126,8 +130,11 @@ export class CurrentFormComponent implements OnInit {
             }),
             map((resp) => resp.events)
           ),
-          user: this.authService.user$.pipe(
-            tap((user) => (this.email = user!.email!))
+          user: of(user).pipe(
+            tap((user) => {
+              console.log('user');
+              this.email = user!.email!;
+            })
           ),
         })
       )
@@ -222,6 +229,7 @@ export class CurrentFormComponent implements OnInit {
     this.betAmountSubject.next(this.betAmount);
 
     let total = 0;
+    console.log('this', this.betAmount);
     for (const amount of this.betAmount.values()) {
       if (amount) total += parseInt(amount);
     }

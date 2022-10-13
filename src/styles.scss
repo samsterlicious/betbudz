@@ -1,43 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-    margin: 0px;
+  margin: 0px;
 }
 
 .pick {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 
 .center {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 100%
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.spinner {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 100%;
+  z-index: 1001;
 }
 
 .bets {
-    flex: 1;
-    flex-direction: row;
-    display: flex;
-    border-radius: 25px;
-    background-color: #D3D3D3;
-    padding: 10px;
-    max-width: 400px;
-    margin-top: 10px;
+  flex: 1;
+  flex-direction: row;
+  display: flex;
+  border-radius: 25px;
+  background-color: #d3d3d3;
+  padding: 10px;
+  max-width: 400px;
+  margin-top: 10px;
 }
 
 .info {
-    flex-direction: column;
-    display: flex;
+  flex-direction: column;
+  display: flex;
 }
 
 .amount {
-    text-align: center;
+  text-align: center;
 }
 
 .spread {
-    text-align: center;
+  text-align: center;
 }

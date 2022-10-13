@@ -1,19 +1,20 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AuthModule } from '@auth0/auth0-angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { EventComponent } from './components/bets/events/event/event.component';
+import { TeamComponent } from './components/bets/events/team/team.component';
 import { CurrentFormComponent } from './components/forms/current-form/current-form.component';
 import { HomeComponent } from './components/home/home.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { LiveBetsComponent } from './components/live-bets/live-bets.component';
 import { MainComponent } from './components/main/main.component';
 import { OutstandingBetsComponent } from './components/outstanding-bets/outstanding-bets.component';
+import { ProfileComponent } from './components/profile/profile/profile.component';
 import { PrimengModule } from './modules/primeng/primeng.module';
-import { EventComponent } from './components/bets/events/event/event.component';
-import { TeamComponent } from './components/bets/events/team/team.component';
 
 const AUTH_IGNORED_PATHS = ['/home'];
 
@@ -28,6 +29,7 @@ const AUTH_IGNORED_PATHS = ['/home'];
     OutstandingBetsComponent,
     EventComponent,
     TeamComponent,
+    ProfileComponent,
   ],
   imports: [
     AuthModule.forRoot({
@@ -44,6 +46,7 @@ const AUTH_IGNORED_PATHS = ['/home'];
     FormsModule,
     HttpClientModule,
     PrimengModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
