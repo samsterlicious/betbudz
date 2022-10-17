@@ -303,8 +303,8 @@ export function getCurrentWeek(): string {
   const startDate = new Date('2022-09-08');
   const currentDate = new Date();
   return String(
-    Math.round(
-      Math.round(
+    Math.floor(
+      Math.floor(
         (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
       ) / 7
     ) + 1
