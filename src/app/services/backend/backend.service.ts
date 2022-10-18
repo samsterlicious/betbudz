@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { mergeMap, Observable, tap } from 'rxjs';
 import { getCurrentWeek } from 'src/app/components/forms/current-form/current-form.component';
+import { UserStore } from 'src/app/store/user.store';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,8 @@ import { getCurrentWeek } from 'src/app/components/forms/current-form/current-fo
 export class BackendService {
   constructor(
     private httpClient: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private user: UserStore
   ) {}
 
   getLeaderboard(): Observable<Bet[]> {
@@ -72,18 +74,23 @@ export class BackendService {
   }
 
   getOutstandingBets(): Observable<Bet[]> {
-    return this.authService.getAccessTokenSilently().pipe(
-      mergeMap((token) =>
-        this.httpClient.get<Bet[]>(
-          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
-          {
-            headers: {
-              Authorization: token,
-            },
-            params: {
-              outstanding: true,
-            },
-          }
+    return this.user.user$.pipe(
+      mergeMap((user) =>
+        this.authService.getAccessTokenSilently().pipe(
+          mergeMap((token) =>
+            this.httpClient.get<Bet[]>(
+              'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
+              {
+                headers: {
+                  Authorization: token,
+                },
+                params: {
+                  outstanding: true,
+                  email: user.email,
+                },
+              }
+            )
+          )
         )
       )
     );

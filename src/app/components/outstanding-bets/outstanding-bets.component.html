@@ -1,35 +1,76 @@
-<div *ngIf="viewModel$ | async as viewModel" class="center">
-    <div *ngFor="let bet of viewModel.outstanding" class="bets"
-    (click)="resolve(bet,viewModel.user?.email)"
-    [class.mine]="
-    bet.personOne === viewModel.user?.email || bet.personTwo === viewModel.user?.email 
-  ">
-        <div class="pick" >
-            <div *ngIf="
-            bet.personOne == bet.winner
-          ">
-            <b>Winner</b>
-            </div>
-          <div>
-            {{ stripDomain(bet.personOne) }}
-          </div>
-          <img width="40" height="40" [src]="getImg(bet.personOneTeam)" />
+<!-- <div *ngIf="viewModel$ | async as viewModel" class="center">
+  <div class="flex flex-column">
+    <div
+      *ngFor="let bet of viewModel.outstanding"
+      class="bets"
+      (click)="resolve(bet, viewModel.user?.email)"
+      [class.mine]="
+        bet.personOne === viewModel.user?.email ||
+        bet.personTwo === viewModel.user?.email
+      "
+    >
+      <div class="pick">
+        <div *ngIf="bet.personOne == bet.winner">
+          <b>Winner</b>
         </div>
-        <div class="info">
-          <div class="spread">{{ bet.spread }}</div>
-          <div class="amount">$ {{ bet.amount }}</div>
+        <div>
+          {{ stripDomain(bet.personOne) }}
         </div>
-        <div class="pick">
-            <div *ngIf="
-            bet.personTwo == bet.winner
-          ">
-            <b>Winner</b>
-            </div>
-          <div>
-            {{ stripDomain(bet.personTwo) }}
-          </div>
-          <img width="40" height="40" [src]="getImg(bet.personTwoTeam)" />
-       </div>
+        <img width="40" height="40" [src]="getImg(bet.personOneTeam)" />
       </div>
+      <div class="info">
+        <div class="spread">{{ bet.spread }}</div>
+        <div class="amount">$ {{ bet.amount }}</div>
+      </div>
+      <div class="pick">
+        <div *ngIf="bet.personTwo == bet.winner">
+          <b>Winner</b>
+        </div>
+        <div>
+          {{ stripDomain(bet.personTwo) }}
+        </div>
+        <img width="40" height="40" [src]="getImg(bet.personTwoTeam)" />
+      </div>
+    </div>
   </div>
-  
+</div> -->
+
+<div
+  *ngIf="viewModel$ | async as viewModel"
+  class="flex flex-column justify-content-center align-items-center"
+>
+  <div class="flex flex-column w-11 md:w-4">
+    <div
+      *ngFor="let bet of viewModel.outstanding"
+      class="flex flex-row flex-1 mt-2 cursor-pointer"
+      (click)="resolve(bet, viewModel.user?.email)"
+    >
+      <div
+        class="flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
+      >
+        <div class="flex-1 text-center">
+          {{ stripDomain(bet.personOne) }}
+        </div>
+        <div class="flex flex-row justify-content-center">
+          <img width="50" height="50" [src]="getImg(bet.personOneTeam)" />
+        </div>
+      </div>
+      <div
+        class="flex flex-column w-6rem text-center justify-content-center font-bold spread"
+      >
+        <div class="spread">{{ bet.spread }}</div>
+        <div class="amount">Wager: {{ bet.amount }}</div>
+      </div>
+      <div
+        class="flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
+      >
+        <div class="flex-1 text-center">
+          {{ stripDomain(bet.personTwo) }}
+        </div>
+        <div class="flex flex-row justify-content-center">
+          <img width="50" height="50" [src]="getImg(bet.personTwoTeam)" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

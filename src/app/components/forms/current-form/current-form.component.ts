@@ -300,7 +300,7 @@ type Total = {
 };
 
 export function getCurrentWeek(): string {
-  const startDate = new Date('2022-09-08');
+  const startDate = new Date('2022-09-06');
   const currentDate = new Date();
   return String(
     Math.floor(
