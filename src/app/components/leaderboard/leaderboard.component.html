@@ -1,18 +1,32 @@
 <div *ngIf="leaderboard$ | async as players" class="center">
-    <p-table [value]="players" responsiveLayout="scroll">
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Rank</th>
-                <th>Email</th>
-                <th>Winnings</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-player>
-            <tr>
-                <td>{{player.rank}}</td>
-                <td>{{player.email}}</td>
-                <td>${{player.winnings}}</td>
-            </tr>
-        </ng-template>
-    </p-table>
-    </div>
+  <p-table [value]="players" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="rank">
+          Rank <p-sortIcon field="rank"></p-sortIcon>
+        </th>
+        <th pSortableColumn="name">
+          Entry Name <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="points">
+          Pts <p-sortIcon field="points"></p-sortIcon>
+        </th>
+        <th pSortableColumn="wins">W <p-sortIcon field="wins"></p-sortIcon></th>
+        <th pSortableColumn="loss">L <p-sortIcon field="loss"></p-sortIcon></th>
+        <th pSortableColumn="push">
+          Push <p-sortIcon field="push"></p-sortIcon>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-player>
+      <tr>
+        <td>{{ player.rank }}</td>
+        <td>{{ player.name }}</td>
+        <td>{{ player.points }}</td>
+        <td>{{ player.wins }}</td>
+        <td>{{ player.loss }}</td>
+        <td>{{ player.push }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

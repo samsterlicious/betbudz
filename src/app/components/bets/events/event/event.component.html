@@ -13,7 +13,7 @@
     <div
       class="flex flex-column w-4rem text-center justify-content-center font-bold text-lg spread"
     >
-      {{ event!.odds.spread }}
+      {{ getSpread(event!.odds.spread) }}
     </div>
     <app-team
       class="flex-1"

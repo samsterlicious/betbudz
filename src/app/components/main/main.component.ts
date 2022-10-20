@@ -40,7 +40,7 @@ export class MainComponent implements OnInit {
           icon: 'pi pi-fw pi-heart-fill',
         },
         {
-          label: 'Past Bets',
+          label: 'Bet Results',
           icon: 'pi pi-fw pi-exclamation-circle',
           routerLink: '/bets/outstanding',
         },

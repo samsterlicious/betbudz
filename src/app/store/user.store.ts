@@ -61,6 +61,14 @@ export class UserStore {
     this.userSubject.next(user);
   }
 
+  getUsers(): Observable<BetUser[]> {
+    return this.http.get<BetUser[]>(`${environment.apiUrl}users`, {
+      headers: {
+        'x-api-key': environment.apiKey,
+      },
+    });
+  }
+
   saveUser(name: string): Observable<any> {
     return combineLatest({
       token: this.authService

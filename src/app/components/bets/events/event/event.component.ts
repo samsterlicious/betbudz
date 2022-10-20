@@ -43,6 +43,12 @@ export class EventComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  getSpread(spread: number): string {
+    if (spread > 0) return String(spread * -1);
+    else if (spread === 0) return 'Pick';
+    else return String(spread);
+  }
+
   clickTeam(clickEvent: ClickedTeamEvent) {
     const clickMap = new Map<string, boolean>();
     clickMap.set(clickEvent.team.abbreviation, true);
