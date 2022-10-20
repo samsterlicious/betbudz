@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
-import { mergeMap, Observable, tap } from 'rxjs';
+import { map, mergeMap, Observable, tap } from 'rxjs';
 import { getCurrentWeek } from 'src/app/components/forms/current-form/current-form.component';
 import { UserStore } from 'src/app/store/user.store';
 
@@ -73,7 +73,7 @@ export class BackendService {
     );
   }
 
-  getOutstandingBets(): Observable<Bet[]> {
+  getOutstandingBets(week: string): Observable<{ bets: Bet[]; email: string }> {
     return this.user.user$.pipe(
       mergeMap((user) =>
         this.authService.getAccessTokenSilently().pipe(
@@ -86,11 +86,14 @@ export class BackendService {
                 },
                 params: {
                   outstanding: true,
-                  email: user.email,
+                  // email: 'keithmcg7@gmail.com',
+                  email: user.email!,
+                  week,
                 },
               }
             )
-          )
+          ),
+          map((bets) => ({ bets, email: user.email! }))
         )
       )
     );
@@ -126,6 +129,44 @@ export class BackendService {
         )
       )
     );
+  }
+
+  fullTeamNames: any = {
+    ARI: 'Arizona Cardinals',
+    ATL: 'Atlanta Falcons',
+    BAL: 'Baltimore Ravens',
+    BUF: 'Buffalo Bills',
+    CAR: 'Carolina Panthers',
+    CHI: 'Chicago Bears',
+    CIN: 'Cincinnati Bengals',
+    CLE: 'Cleveland Browns',
+    DAL: 'Dallas Cowboys',
+    DEN: 'Denver Broncos',
+    DET: 'Detroit Lions',
+    GB: 'Green Bay Packers',
+    HOU: 'Houston Texans',
+    IND: 'Indianapolis Colts',
+    JAX: 'Jacksonville Jaguars',
+    KC: 'Kansas City Chiefs',
+    LAC: 'Los Angeles Chargers',
+    LAR: 'Los Angeles Rams',
+    LV: 'Las Vegas Raiders',
+    MIA: 'Miami Dolphins',
+    MIN: 'Minnesota Vikings',
+    NE: 'New England Patriots',
+    NO: 'Arizona Cardinals',
+    NYG: 'New York Giants',
+    NYJ: 'New York Jets',
+    PHI: 'Philadelphia Eagles',
+    PIT: 'Pittsburgh Steelers',
+    SEA: 'Seattle Seahawks',
+    SF: 'San Francisco 49ers',
+    TB: 'Tampa Bay Buccaneers',
+    TEN: 'Tennessee Titans',
+    WSH: 'Washington Commanders',
+  };
+  getFullTeamName(team: string): string {
+    return this.fullTeamNames[team];
   }
 }
 

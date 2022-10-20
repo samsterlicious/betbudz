@@ -1,33 +1,104 @@
 <div
-  *ngIf="liveBets$ | async as liveBets"
+  *ngIf="viewModel$ | async as viewModel"
   class="flex flex-column justify-content-center align-items-center"
 >
   <div class="flex flex-column w-11 md:w-4">
-    <div *ngFor="let bet of liveBets" class="flex flex-row flex-1 mt-2">
+    <div class="flex flex-row flex-1 mt-2">
+      <div class="flex-1 text-center font-bold">My Bets</div>
       <div
-        class="flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
+        class="flex flex-column w-6rem text-center justify-content-center font-bold spread"
       >
-        <div class="flex-1 text-center">
-          {{ stripDomain(bet.personOne) }}
+        &nbsp;
+      </div>
+      <div class="flex-1 text-center font-bold">Opponent</div>
+    </div>
+    <div
+      *ngFor="let bet of viewModel.liveBets"
+      class="flex flex-row flex-1 mt-2"
+    >
+      <div class="hidden lg:inline-flex lg:flex-1">
+        <div
+          class="justify-content-start flex-1 flex flex-row border-round-sm surface-200 border-400 border-1 p-2"
+        >
+          <div class="flex-1 flex flex-column justify-content-center">
+            <img
+              width="50"
+              height="50"
+              [src]="getImg(bet, viewModel.user.email!, true)"
+            />
+          </div>
+
+          <div
+            class="text-left lex-2 ml-3 xl:mr-1 flex flex-column justify-content-center"
+          >
+            {{ getMe(bet, viewModel.user.email!, true, false) }}
+          </div>
+
+          <div
+            class="flex-1 flex text-right xl:mr-1 flex-column justify-content-center font-bold text-lg"
+          >
+            {{ getMySpread(bet, viewModel.user.email!) }}
+          </div>
         </div>
+      </div>
+      <div
+        class="lg:hidden flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
+      >
         <div class="flex flex-row justify-content-center">
-          <img width="50" height="50" [src]="getImg(bet.personOneTeam)" />
+          <img
+            width="50"
+            height="50"
+            [src]="getImg(bet, viewModel.user.email!, true)"
+          />
+        </div>
+        <div class="flex-1 text-center">
+          {{ getMe(bet, viewModel.user.email!, true, true) }}
+        </div>
+        <div class="text-center mt-2">
+          {{ getMySpread(bet, viewModel.user.email!) }}
         </div>
       </div>
       <div
         class="flex flex-column w-6rem text-center justify-content-center font-bold spread"
       >
-        <div class="spread">{{ bet.spread }}</div>
         <div class="amount">Wager: {{ bet.amount }}</div>
       </div>
+      <div class="hidden lg:inline-flex lg:flex-1">
+        <div
+          class="justify-content-start flex-1 flex flex-row border-round-sm surface-200 border-400 border-1 p-2"
+        >
+          <div class="flex-1 flex flex-column justify-content-center">
+            <img
+              width="50"
+              height="50"
+              [src]="getImg(bet, viewModel.user.email!, false)"
+            />
+          </div>
+
+          <div
+            class="text-left lex-2 ml-3 xl:mr-1 flex flex-column justify-content-center"
+          >
+            {{ getMe(bet, viewModel.user.email!, false, false) }}
+          </div>
+          <div
+            class="flex-1 flex text-right xl:mr-1 flex-column justify-content-center font-bold text-lg"
+          >
+            &nbsp;
+          </div>
+        </div>
+      </div>
       <div
-        class="flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
+        class="lg:hidden flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
       >
         <div class="flex-1 text-center">
-          {{ stripDomain(bet.personTwo) }}
+          {{ getMe(bet, viewModel.user.email!, false, true) }}
         </div>
         <div class="flex flex-row justify-content-center">
-          <img width="50" height="50" [src]="getImg(bet.personTwoTeam)" />
+          <img
+            width="50"
+            height="50"
+            [src]="getImg(bet, viewModel.user.email!, false)"
+          />
         </div>
       </div>
     </div>
