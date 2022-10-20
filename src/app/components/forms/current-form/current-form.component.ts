@@ -246,7 +246,6 @@ export class CurrentFormComponent implements OnInit {
     this.betAmountSubject.next(this.betAmount);
 
     let total = 0;
-    console.log('this', this.betAmount);
     for (const amount of this.betAmount.values()) {
       if (amount) total += parseInt(amount);
     }

@@ -52,6 +52,8 @@
         </div>
         <div
           class="lg:hidden flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
+          [class.bg-green-400]="didIWin(bet, viewModel.user.email!)"
+          [class.bg-red-300]="!didIWin(bet, viewModel.user.email!)"
         >
           <div class="flex flex-row justify-content-center">
             <img

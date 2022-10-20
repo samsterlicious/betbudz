@@ -21,6 +21,17 @@ export class EspnService {
     this.weekMap.set('9', '20221103-20221107');
   }
 
+  getSpread(details: { shortName: string; details: string }): number {
+    const home = details.shortName.replace(/^\w+\s+@\s+/, '');
+    const spreadTeam = details.details.replace(/\s+.+$/, '');
+    const spread = parseInt(details.details.replace(/\w+\s+/, ''));
+    if (home === spreadTeam) {
+      return spread * -1;
+    } else {
+      return spread;
+    }
+  }
+
   getGamesByWeek(week: string): Observable<EspnEvent[]> {
     return this.httpClient
       .get(
@@ -28,7 +39,21 @@ export class EspnService {
           week
         )}`
       )
-      .pipe(map((resp: any) => resp.sports[0].leagues[0].events));
+      .pipe(
+        map((resp: any) => resp.sports[0].leagues[0].events),
+        map((events: EspnEvent[]) => {
+          events.map((event) => {
+            return {
+              ...event,
+              spread: this.getSpread({
+                shortName: event.shortName,
+                details: event.odds.details,
+              }),
+            };
+          });
+          return events;
+        })
+      );
   }
 }
 
@@ -51,4 +76,5 @@ export type EspnEvent = {
 
 type Odds = {
   spread: number;
+  details: string;
 };

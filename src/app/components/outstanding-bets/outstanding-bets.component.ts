@@ -112,6 +112,7 @@ export class OutstandingBetsComponent implements OnInit {
     const gameInfo = bet.game.replace(/^[^#]+#([^#]+)#.+$/, '$1');
     const homeTeam = gameInfo.replace(/\w+\s+@\s+/, '');
     let spread = 0;
+    console.log(bet, email);
     if (bet.personOne === email) {
       if (bet.personOneTeam === homeTeam) {
         spread = parseInt(bet.spread) * -1;
