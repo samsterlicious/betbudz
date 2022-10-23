@@ -9,6 +9,7 @@
       [otherTeam]="underdog"
       (betEvent)="setBet($event)"
       (clickedTeamEvent)="clickTeam($event)"
+      [oldWeek]="oldWeek"
     ></app-team>
     <div
       class="flex flex-column w-4rem text-center justify-content-center font-bold text-lg spread"
@@ -22,6 +23,7 @@
       [selected]="showInputMap.get(underdog.abbreviation)"
       [team]="underdog"
       [otherTeam]="favorite"
+      [oldWeek]="oldWeek"
       (betEvent)="setBet($event)"
       (clickedTeamEvent)="clickTeam($event)"
     ></app-team>

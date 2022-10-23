@@ -42,6 +42,7 @@
             [showInputMap]="showInputMap"
             [underdog]="underdog"
             [event]="event"
+            [oldWeek]="latestWeek !== week.code"
             (eventBetEvent)="setBet($event)"
             (eventSelectEvent)="handleSelectEvent($event)"
           ></app-event>

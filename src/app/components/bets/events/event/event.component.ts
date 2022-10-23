@@ -31,6 +31,9 @@ export class EventComponent implements OnInit {
   event!: EspnEvent;
 
   @Input()
+  oldWeek!: boolean;
+
+  @Input()
   showInputMap!: Map<string, boolean>;
 
   @Output()

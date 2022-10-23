@@ -6,8 +6,8 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { DateTime, Interval } from 'luxon';
 import { Competitor, EspnEvent } from 'src/app/services/espn.service';
-
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-team',
@@ -29,6 +29,9 @@ export class TeamComponent implements OnInit {
 
   @Input()
   selected?: boolean;
+
+  @Input()
+  oldWeek!: boolean;
 
   @Input()
   team!: Competitor;
@@ -54,11 +57,25 @@ export class TeamComponent implements OnInit {
   }
 
   isDisabled(): boolean {
-    const date = this.event.date;
-    const currentDate = new Date();
-    if (date.getDay() === 4 && currentDate.getDay() >= 5) return true;
-    if (date.getDay() > 4 && currentDate.getDay() >= 6) return true;
-    return false;
+    if (this.oldWeek) return true;
+    const date = DateTime.fromJSDate(this.event.date, { zone: 'est' });
+    const currentDate = DateTime.fromJSDate(new Date(), { zone: 'est' });
+
+    const diff = Interval.fromDateTimes(date, currentDate);
+    const diffDays = diff.length('days');
+
+    if (diffDays > 5) return true;
+    if (date.weekday === 4 && (currentDate.day === 2 || currentDate.day === 3))
+      return false;
+    if (
+      date.weekday !== 4 &&
+      (currentDate.day === 2 ||
+        currentDate.day === 3 ||
+        currentDate.day === 4 ||
+        currentDate.day === 5)
+    )
+      return false;
+    return true;
   }
 
   isValidBet(): boolean {
