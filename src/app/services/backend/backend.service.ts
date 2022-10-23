@@ -68,7 +68,7 @@ export class BackendService {
                 params: {
                   live: true,
                   week: getCurrentWeek(),
-                  email: user.email!,
+                  email: 'keithmcg7@gmail.com',
                 },
               }
             )
