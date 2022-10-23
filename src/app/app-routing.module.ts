@@ -18,7 +18,7 @@ const routes: Routes = [
   {
     path: 'bets/live',
     component: LiveBetsComponent,
-    canActivate: [UsernameGuard],
+    canActivate: [AuthGuard, UsernameGuard],
   },
   {
     path: 'bets/outstanding',

@@ -55,19 +55,24 @@ export class BackendService {
   }
 
   getLiveBets(week?: string): Observable<Bet[]> {
-    return this.authService.getAccessTokenSilently().pipe(
-      mergeMap((token) =>
-        this.httpClient.get<Bet[]>(
-          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
-          {
-            headers: {
-              Authorization: token,
-            },
-            params: {
-              live: true,
-              week: getCurrentWeek(),
-            },
-          }
+    return this.user.user$.pipe(
+      mergeMap((user) =>
+        this.authService.getAccessTokenSilently().pipe(
+          mergeMap((token) =>
+            this.httpClient.get<Bet[]>(
+              'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
+              {
+                headers: {
+                  Authorization: token,
+                },
+                params: {
+                  live: true,
+                  week: getCurrentWeek(),
+                  email: user.email!,
+                },
+              }
+            )
+          )
         )
       )
     );
