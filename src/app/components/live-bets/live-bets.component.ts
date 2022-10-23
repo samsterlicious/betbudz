@@ -13,6 +13,8 @@ import { UserStore } from 'src/app/store/user.store';
 })
 export class LiveBetsComponent implements OnInit {
   viewModel$: Observable<ViewModel>;
+  total = 0;
+
   constructor(
     private api: BackendService,
     private spinner: SpinnerService,
@@ -22,7 +24,12 @@ export class LiveBetsComponent implements OnInit {
 
     this.viewModel$ = combineLatest({
       liveBets: this.api.getLiveBets().pipe(
-        tap(() => {
+        tap((bets) => {
+          let total = 0;
+          bets.forEach((bet) => {
+            total += bet.amount;
+          });
+          this.total = total;
           this.spinner.turnOff();
         })
       ),
