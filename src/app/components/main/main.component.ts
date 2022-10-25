@@ -32,19 +32,10 @@ export class MainComponent implements OnInit {
       routerLink: '/bets/current',
     },
     {
-      label: 'My Bets',
-      items: [
-        {
-          label: 'Current Bets',
-          routerLink: '/bets/live',
-          icon: 'pi pi-fw pi-heart-fill',
-        },
-        {
-          label: 'Bet Results',
-          icon: 'pi pi-fw pi-exclamation-circle',
-          routerLink: '/bets/outstanding',
-        },
-      ],
+      label: 'Bets',
+      icon: 'pi pi-fw pi-heart-fill',
+
+      routerLink: '/bets/past',
     },
     {
       label: 'Reports',

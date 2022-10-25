@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { User } from '@auth0/auth0-angular';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import {
+  BehaviorSubject,
   combineLatest,
   map,
   mergeMap,
   Observable,
-  ReplaySubject,
   Subject,
   tap,
 } from 'rxjs';
@@ -17,7 +17,6 @@ import {
 } from 'src/app/services/backend/backend.service';
 import { SpinnerService } from 'src/app/services/spinner/spinner.service';
 import { UserStore } from 'src/app/store/user.store';
-import { getCurrentWeek } from '../forms/current-form/current-form.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,7 +26,7 @@ import { getCurrentWeek } from '../forms/current-form/current-form.component';
 })
 export class OutstandingBetsComponent implements OnInit {
   viewModel$: Observable<ViewModel>;
-  weekSubject: ReplaySubject<string>;
+  weekSubject: BehaviorSubject<string>;
 
   week: SelectItem;
 
@@ -53,7 +52,7 @@ export class OutstandingBetsComponent implements OnInit {
     private spinner: SpinnerService,
     private serv: BackendService
   ) {
-    this.weekSubject = new ReplaySubject<string>(1);
+    this.weekSubject = new BehaviorSubject<string>(getCurrentWeek());
 
     this.week = { name: `Week ${this.latestWeek}`, code: this.latestWeek };
     this.weeks = [...Array(parseInt(this.latestWeek)).keys()].map((i) => ({
@@ -108,6 +107,7 @@ export class OutstandingBetsComponent implements OnInit {
               resp.names[row.player] ?? row.player.replace(/@.+$/, '');
           });
         }
+        console.log('that next tho', this.oweTally);
         this.oweTallySubject.next(this.oweTally);
       })
     );
@@ -245,3 +245,15 @@ type SelectItem = {
   name: string;
   code: string;
 };
+
+function getCurrentWeek(): string {
+  const startDate = new Date('2022-09-08T07:00:03.513Z');
+  const currentDate = new Date();
+  return String(
+    Math.floor(
+      Math.floor(
+        (currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+      ) / 7
+    ) + 1
+  );
+}

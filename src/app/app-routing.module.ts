@@ -4,7 +4,6 @@ import { AuthGuard } from '@auth0/auth0-angular';
 import { CurrentFormComponent } from './components/forms/current-form/current-form.component';
 import { HomeComponent } from './components/home/home.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
-import { LiveBetsComponent } from './components/live-bets/live-bets.component';
 import { OutstandingBetsComponent } from './components/outstanding-bets/outstanding-bets.component';
 import { ProfileComponent } from './components/profile/profile/profile.component';
 import { UsernameGuard } from './guards/username/username.guard';
@@ -16,12 +15,7 @@ const routes: Routes = [
     canActivate: [AuthGuard, UsernameGuard],
   },
   {
-    path: 'bets/live',
-    component: LiveBetsComponent,
-    canActivate: [AuthGuard, UsernameGuard],
-  },
-  {
-    path: 'bets/outstanding',
+    path: 'bets/past',
     component: OutstandingBetsComponent,
     canActivate: [AuthGuard, UsernameGuard],
   },

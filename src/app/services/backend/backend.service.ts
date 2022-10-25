@@ -81,6 +81,12 @@ export class BackendService {
   getOutstandingBets(
     week: string
   ): Observable<{ bets: Bet[]; email: string; oweTally: OweTally[] }> {
+    const params: any = {};
+    if (getCurrentWeek() === week) {
+      params.live = true;
+    } else {
+      params.outstanding = true;
+    }
     return this.user.user$.pipe(
       mergeMap((user) =>
         this.authService.getAccessTokenSilently().pipe(
@@ -92,10 +98,9 @@ export class BackendService {
                   Authorization: token,
                 },
                 params: {
-                  outstanding: true,
-                  // email: 'keithmcg7@gmail.com',
                   email: user.email!,
                   week,
+                  ...params,
                 },
               }
             )
