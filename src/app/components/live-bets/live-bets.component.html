@@ -19,6 +19,9 @@
       <div class="hidden lg:inline-flex lg:flex-1">
         <div
           class="justify-content-start flex-1 flex flex-row border-round-sm surface-200 border-400 border-1 p-2"
+          [class.bg-green-400]="winnerMap[bet.game] == 'W'"
+          [class.bg-red-300]="winnerMap[bet.game] == 'L'"
+          [class.bg-yellow-300]="winnerMap[bet.game] == 'P'"
         >
           <div class="flex-1 flex flex-column justify-content-center">
             <img

@@ -63,16 +63,19 @@ export class TeamComponent implements OnInit {
 
     const diff = Interval.fromDateTimes(date, currentDate);
     const diffDays = diff.length('days');
-
+    console.log('currentDate.day ', currentDate.weekday);
     if (diffDays > 5) return true;
-    if (date.weekday === 4 && (currentDate.day === 2 || currentDate.day === 3))
+    if (
+      date.weekday === 4 &&
+      (currentDate.weekday === 2 || currentDate.weekday === 3)
+    )
       return false;
     if (
       date.weekday !== 4 &&
-      (currentDate.day === 2 ||
-        currentDate.day === 3 ||
-        currentDate.day === 4 ||
-        currentDate.day === 5)
+      (currentDate.weekday === 2 ||
+        currentDate.weekday === 3 ||
+        currentDate.weekday === 4 ||
+        currentDate.weekday === 5)
     )
       return false;
     return true;
@@ -83,7 +86,7 @@ export class TeamComponent implements OnInit {
       `${this.team.abbreviation}#${this.event.shortName}`
     );
     if (!amount) return true;
-    return parseInt(amount) > 0.99 && parseInt(amount) < 101;
+    return parseFloat(amount) > 0.99 && parseFloat(amount) < 101;
   }
 
   handleBetChange(betAmount: any): void {

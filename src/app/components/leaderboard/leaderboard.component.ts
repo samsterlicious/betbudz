@@ -34,7 +34,7 @@ export class LeaderboardComponent implements OnInit {
     }).pipe(
       map((resp) => {
         const players: { [key: string]: Player } = {};
-        resp.bets.forEach((bet) => {
+        resp.bets.bets.forEach((bet) => {
           players[bet.personOne] = {
             name: '',
             rank: 0,
@@ -59,7 +59,7 @@ export class LeaderboardComponent implements OnInit {
           userMap[member.email] = member.name ?? member.email;
         }
 
-        resp.bets.forEach((bet) => {
+        resp.bets.bets.forEach((bet) => {
           if (bet.winner) {
             players[bet.winner].points += bet.amount;
             players[bet.winner].wins += 1;

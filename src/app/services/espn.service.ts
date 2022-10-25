@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { AuthService } from '@auth0/auth0-angular';
+import { forkJoin, map, mergeMap, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +10,10 @@ import { map, Observable } from 'rxjs';
 export class EspnService {
   weekMap: Map<string, string>;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private authService: AuthService
+  ) {
     this.weekMap = new Map();
     this.weekMap.set('1', '20220908-20220912');
     this.weekMap.set('2', '20220915-20220919');
@@ -22,9 +27,10 @@ export class EspnService {
   }
 
   getSpread(details: { shortName: string; details: string }): number {
+    console.log('details', details);
     const home = details.shortName.replace(/^\w+\s+@\s+/, '');
     const spreadTeam = details.details.replace(/\s+.+$/, '');
-    const spread = parseInt(details.details.replace(/\w+\s+/, ''));
+    const spread = parseFloat(details.details.replace(/\w+\s+/, ''));
     if (home === spreadTeam) {
       return spread * -1;
     } else {
@@ -33,27 +39,43 @@ export class EspnService {
   }
 
   getGamesByWeek(week: string): Observable<EspnEvent[]> {
-    return this.httpClient
-      .get(
-        `https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=football&league=nfl&region=us&lang=en&contentorigin=espn&dates=${this.weekMap.get(
-          week
-        )}`
-      )
-      .pipe(
-        map((resp: any) => resp.sports[0].leagues[0].events),
-        map((events: EspnEvent[]) => {
-          events.map((event) => {
-            return {
-              ...event,
-              spread: this.getSpread({
-                shortName: event.shortName,
-                details: event.odds.details,
-              }),
-            };
+    return forkJoin({
+      espn: this.httpClient
+        .get(
+          `https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=football&league=nfl&region=us&lang=en&contentorigin=espn&dates=${this.weekMap.get(
+            week
+          )}`
+        )
+        .pipe(
+          map((resp: any) => resp.sports[0].leagues[0].events as EspnEvent[])
+        ),
+      savedSpread: this.authService.getAccessTokenSilently().pipe(
+        mergeMap((token) =>
+          this.httpClient.get<{
+            [game: string]: { spread: string; details: string };
+          }>(`${environment.apiUrl}spread?week=${week}`, {
+            headers: {
+              Authorization: token,
+            },
+          })
+        )
+      ),
+    }).pipe(
+      map((resp) => {
+        let eventz = resp.espn.filter(
+          (event) => !!resp.savedSpread[event.shortName].spread
+        );
+        for (const event of eventz) {
+          const mySpread = resp.savedSpread[event.shortName];
+          event.odds.details = mySpread.details;
+          event.odds.spread = this.getSpread({
+            shortName: event.shortName,
+            details: mySpread.details,
           });
-          return events;
-        })
-      );
+        }
+        return eventz;
+      })
+    );
   }
 }
 
@@ -64,6 +86,7 @@ export type Competitor = {
   logo: string;
   name: string;
   record: string;
+  score: string;
 };
 
 export type EspnEvent = {
@@ -72,9 +95,18 @@ export type EspnEvent = {
   competitors: Competitor[];
   shortName: string;
   week: number;
+  fullStatus: EventStatus;
 };
 
 type Odds = {
   spread: number;
   details: string;
+};
+
+type EventStatus = {
+  type: EventType;
+};
+
+type EventType = {
+  completed: boolean;
 };

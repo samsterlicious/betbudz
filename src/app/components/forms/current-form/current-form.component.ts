@@ -134,7 +134,7 @@ export class CurrentFormComponent implements OnInit {
               for (const pick of resp.picks) {
                 this.showinputMap.set(pick.team, true);
                 this.betAmount.set(`${pick.team}#${pick.game}`, pick.amount);
-                total += parseInt(pick.amount);
+                total += parseFloat(pick.amount);
               }
               this.showinputMapSubject.next(this.showinputMap);
               this.totalSubject.next({ amount: total });
@@ -171,7 +171,7 @@ export class CurrentFormComponent implements OnInit {
   getTotal(): number {
     let total = 0;
     for (const amount of this.betAmount.values()) {
-      total += parseInt(amount);
+      total += parseFloat(amount);
     }
     return total;
   }
@@ -179,7 +179,7 @@ export class CurrentFormComponent implements OnInit {
   anyInvalidBets(): boolean {
     for (const amount of this.betAmount.values()) {
       try {
-        const dollars = parseInt(amount);
+        const dollars = parseFloat(amount);
         if (dollars > 100 || dollars < 1) return true;
       } catch {
         return true;
@@ -198,9 +198,9 @@ export class CurrentFormComponent implements OnInit {
     }
 
     for (const entry of this.betAmount.entries()) {
-      if (parseInt(entry[1]) > 0) {
+      if (parseFloat(entry[1]) > 0) {
         teamPickSet.delete(entry[0].replace(/#.+$/, ''));
-        totalWager += parseInt(entry[1]);
+        totalWager += parseFloat(entry[1]);
         picks.push({
           amount: entry[1],
           game: entry[0].replace(/^.+#/, ''),
@@ -247,7 +247,7 @@ export class CurrentFormComponent implements OnInit {
 
     let total = 0;
     for (const amount of this.betAmount.values()) {
-      if (amount) total += parseInt(amount);
+      if (amount) total += parseFloat(amount);
     }
     this.totalSubject.next({ amount: total });
   }
@@ -299,7 +299,7 @@ type Total = {
 };
 
 export function getCurrentWeek(): string {
-  const startDate = new Date('2022-09-06');
+  const startDate = new Date('2022-09-06T07:00:03.513Z');
   const currentDate = new Date();
   return String(
     Math.floor(

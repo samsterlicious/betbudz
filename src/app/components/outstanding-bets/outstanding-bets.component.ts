@@ -7,9 +7,14 @@ import {
   mergeMap,
   Observable,
   ReplaySubject,
+  Subject,
   tap,
 } from 'rxjs';
-import { BackendService, Bet } from 'src/app/services/backend/backend.service';
+import {
+  BackendService,
+  Bet,
+  OweTally,
+} from 'src/app/services/backend/backend.service';
 import { SpinnerService } from 'src/app/services/spinner/spinner.service';
 import { UserStore } from 'src/app/store/user.store';
 import { getCurrentWeek } from '../forms/current-form/current-form.component';
@@ -32,6 +37,14 @@ export class OutstandingBetsComponent implements OnInit {
 
   total: number = 0;
 
+  oweTallySubject: Subject<
+    { amount: number; player: string; amOwed: boolean }[] | undefined
+  >;
+  oweTally$: Observable<
+    { amount: number; player: string; amOwed: boolean }[] | undefined
+  >;
+  oweTally?: OweTally[];
+
   constructor(
     private messageService: MessageService,
     private userService: UserStore,
@@ -48,12 +61,29 @@ export class OutstandingBetsComponent implements OnInit {
       name: `Week ${i + 1}`,
     }));
 
+    this.oweTallySubject = new Subject();
+    this.oweTally$ = this.oweTallySubject.asObservable();
+
     this.viewModel$ = combineLatest({
+      names: this.userService.getUsers().pipe(
+        map((users) => {
+          const map: any = {};
+          users.forEach((u) => {
+            map[u.email] = u.name;
+          });
+          return map;
+        })
+      ),
       outstanding: this.weekSubject.asObservable().pipe(
         tap(() => this.spinner.turnOn()),
         mergeMap((week) =>
           this.api.getOutstandingBets(week).pipe(
             tap((resp) => {
+              if (resp.oweTally) {
+                this.oweTally = resp.oweTally;
+              } else {
+                this.oweTally = undefined;
+              }
               this.spinner.turnOff();
               let total = 0;
               for (const bet of resp.bets) {
@@ -70,7 +100,17 @@ export class OutstandingBetsComponent implements OnInit {
         )
       ),
       user: userService.user$.pipe(tap((user) => console.log(user))),
-    });
+    }).pipe(
+      tap((resp) => {
+        if (this.oweTally) {
+          this.oweTally.forEach((row) => {
+            row.player =
+              resp.names[row.player] ?? row.player.replace(/@.+$/, '');
+          });
+        }
+        this.oweTallySubject.next(this.oweTally);
+      })
+    );
   }
 
   ngOnInit(): void {}
@@ -115,15 +155,15 @@ export class OutstandingBetsComponent implements OnInit {
     console.log(bet, email);
     if (bet.personOne === email) {
       if (bet.personOneTeam === homeTeam) {
-        spread = parseInt(bet.spread) * -1;
+        spread = parseFloat(bet.spread) * -1;
       } else {
-        spread = parseInt(bet.spread);
+        spread = parseFloat(bet.spread);
       }
     } else {
       if (bet.personOneTeam === homeTeam) {
-        spread = parseInt(bet.spread);
+        spread = parseFloat(bet.spread);
       } else {
-        spread = parseInt(bet.spread) * -1;
+        spread = parseFloat(bet.spread) * -1;
       }
     }
 

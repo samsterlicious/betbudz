@@ -8,6 +8,19 @@
         (ngModelChange)="handleWeekChange($event)"
       ></p-dropdown>
     </div>
+    <div
+      *ngIf="oweTally$ | async as oweTally"
+      class="flex flex-row mt-4 mb-2 justify-content-center"
+    >
+      <div *ngFor="let tallyRow of oweTally" class="text-center text-xl">
+        <span *ngIf="tallyRow.amOwed">
+          <b>{{ tallyRow.player }}</b> owes you {{ tallyRow.amount }}
+        </span>
+        <span *ngIf="!tallyRow.amOwed">
+          You owe <b>{{ tallyRow.player }}</b> {{ tallyRow.amount }}
+        </span>
+      </div>
+    </div>
     <div class="flex flex-row flex-1 mt-2">
       <div class="flex-1 text-center font-bold">My Bets</div>
       <div
@@ -20,8 +33,7 @@
     <ng-container *ngIf="viewModel$ | async as viewModel">
       <div
         *ngFor="let bet of viewModel.outstanding"
-        class="flex flex-row flex-1 mt-2 cursor-pointer"
-        (click)="resolve(bet, viewModel.user.email)"
+        class="flex flex-row flex-1 mt-2"
       >
         <div class="hidden lg:inline-flex lg:flex-1">
           <div

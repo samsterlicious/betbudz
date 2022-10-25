@@ -15,11 +15,11 @@ export class BackendService {
     private user: UserStore
   ) {}
 
-  getLeaderboard(): Observable<Bet[]> {
+  getLeaderboard(): Observable<GetBetEndpointResponse> {
     return this.authService.getAccessTokenSilently().pipe(
       tap((token) => console.log(token)),
       mergeMap((token) =>
-        this.httpClient.get<Bet[]>(
+        this.httpClient.get<GetBetEndpointResponse>(
           'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
           {
             headers: {
@@ -54,12 +54,12 @@ export class BackendService {
     );
   }
 
-  getLiveBets(week?: string): Observable<Bet[]> {
+  getLiveBets(week?: string): Observable<GetBetEndpointResponse> {
     return this.user.user$.pipe(
       mergeMap((user) =>
         this.authService.getAccessTokenSilently().pipe(
           mergeMap((token) =>
-            this.httpClient.get<Bet[]>(
+            this.httpClient.get<GetBetEndpointResponse>(
               'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
               {
                 headers: {
@@ -68,7 +68,7 @@ export class BackendService {
                 params: {
                   live: true,
                   week: getCurrentWeek(),
-                  email: 'keithmcg7@gmail.com',
+                  email: user.email,
                 },
               }
             )
@@ -78,12 +78,14 @@ export class BackendService {
     );
   }
 
-  getOutstandingBets(week: string): Observable<{ bets: Bet[]; email: string }> {
+  getOutstandingBets(
+    week: string
+  ): Observable<{ bets: Bet[]; email: string; oweTally: OweTally[] }> {
     return this.user.user$.pipe(
       mergeMap((user) =>
         this.authService.getAccessTokenSilently().pipe(
           mergeMap((token) =>
-            this.httpClient.get<Bet[]>(
+            this.httpClient.get<GetBetEndpointResponse>(
               'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
               {
                 headers: {
@@ -98,7 +100,11 @@ export class BackendService {
               }
             )
           ),
-          map((bets) => ({ bets, email: user.email! }))
+          map((resp) => ({
+            bets: resp.bets,
+            email: user.email!,
+            oweTally: resp.oweTally,
+          }))
         )
       )
     );
@@ -202,4 +208,15 @@ export type Bet = {
   id: string;
   game: string;
   week: string;
+};
+
+type GetBetEndpointResponse = {
+  bets: Bet[];
+  oweTally: OweTally[];
+};
+
+export type OweTally = {
+  amount: number;
+  player: string;
+  amOwed: boolean;
 };
