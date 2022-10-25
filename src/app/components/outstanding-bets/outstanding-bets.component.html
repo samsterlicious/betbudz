@@ -10,16 +10,16 @@
     </div>
     <div
       *ngIf="oweTally$ | async as oweTally"
-      class="flex flex-row mt-4 mb-2 justify-content-center"
+      class="flex flex-column mt-4 mb-2"
     >
       <div
         *ngFor="let tallyRow of oweTally"
-        class="flex flex-row text-center text-xl"
+        class="flex-1 flex flex-row text-center text-xl justify-content-center mt-2"
       >
         <div
-          class="flex-1 border-round-sm surface-200 border-400 border-1 p-3"
-          [class.bg-green-300]="tallyRow.amOwed"
-          [class.bg-red-300]="!tallyRow.amOwed"
+          class="w-11 md:w-20rem border-round-sm surface-200 border-400 border-1 p-3"
+          [class.bg-green-200]="tallyRow.amOwed"
+          [class.bg-red-200]="!tallyRow.amOwed"
         >
           <span *ngIf="tallyRow.amOwed">
             <b>{{ tallyRow.player }}</b> owes you {{ tallyRow.amount }}
