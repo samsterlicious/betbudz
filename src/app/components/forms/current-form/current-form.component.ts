@@ -161,11 +161,15 @@ export class CurrentFormComponent implements OnInit {
   ngOnInit(): void {}
 
   getFavorite(event: EspnEvent): Competitor {
-    return event.odds.spread > 0 ? event.competitors[1] : event.competitors[0];
+    return event.odds.details.includes(event.competitors[0].abbreviation)
+      ? event.competitors[0]
+      : event.competitors[1];
   }
 
   getUnderdog(event: EspnEvent): Competitor {
-    return event.odds.spread > 0 ? event.competitors[0] : event.competitors[1];
+    return event.odds.details.includes(event.competitors[0].abbreviation)
+      ? event.competitors[1]
+      : event.competitors[0];
   }
 
   getTotal(): number {
