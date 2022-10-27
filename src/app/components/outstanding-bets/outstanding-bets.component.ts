@@ -152,7 +152,7 @@ export class OutstandingBetsComponent implements OnInit {
     const gameInfo = bet.game.replace(/^[^#]+#([^#]+)#.+$/, '$1');
     const homeTeam = gameInfo.replace(/\w+\s+@\s+/, '');
     let spread = 0;
-    console.log(bet, email);
+    console.log('sam', bet, email);
     if (bet.personOne === email) {
       if (bet.personOneTeam === homeTeam) {
         spread = parseFloat(bet.spread) * -1;
@@ -171,10 +171,16 @@ export class OutstandingBetsComponent implements OnInit {
   }
 
   didIWin(bet: Bet, email: string): boolean {
+    if (!bet.procd) return false;
     if (bet.winner === email) return true;
     return false;
   }
 
+  didILose(bet: Bet, email: string): boolean {
+    if (!bet.procd) return false;
+    if (bet.winner && bet.winner !== email) return true;
+    return false;
+  }
   resolve(bet: Bet, email?: string): void {
     console.log(bet.personOne === email || bet.personTwo === email);
     if (bet.personOne === email || bet.personTwo === email) {
