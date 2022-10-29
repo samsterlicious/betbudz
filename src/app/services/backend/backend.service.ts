@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
-import { map, mergeMap, Observable, tap } from 'rxjs';
+import { map, mergeMap, Observable } from 'rxjs';
 import { getCurrentWeek } from 'src/app/components/forms/current-form/current-form.component';
 import { UserStore } from 'src/app/store/user.store';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -16,21 +17,16 @@ export class BackendService {
   ) {}
 
   getLeaderboard(): Observable<GetBetEndpointResponse> {
-    return this.authService.getAccessTokenSilently().pipe(
-      tap((token) => console.log(token)),
-      mergeMap((token) =>
-        this.httpClient.get<GetBetEndpointResponse>(
-          'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets',
-          {
-            headers: {
-              Authorization: token,
-            },
-            params: {
-              leaderboard: true,
-            },
-          }
-        )
-      )
+    return this.httpClient.get<GetBetEndpointResponse>(
+      'https://r858btxg3d.execute-api.us-east-1.amazonaws.com/prod/bets/leaderboard',
+      {
+        headers: {
+          'x-api-key': environment.apiKey,
+        },
+        params: {
+          leaderboard: true,
+        },
+      }
     );
   }
 
