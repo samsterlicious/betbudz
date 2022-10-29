@@ -1,1 +1,21 @@
-<div class="center">Go to Forms->Current to fill out picks</div>
+<div class="flex flex-column lg:flex-row">
+  <div class="flex-1 text-xl">
+    <ul>
+      <li>Pick your team, add your wager amounts.</li>
+      <li>
+        We'll find someone betting the opposite side and match you up.
+        <b>No Fees, No Vigs.</b>
+      </li>
+      <li>Spreads updated every Tuesday Morning.</li>
+      <li>Thursday Night Picks lock Wednesday at 11:59 PM PST.</li>
+      <li>
+        All other games lock on Friday at 11:59 PM PST, and your matchups will
+        update in the "Current Bets" Section.
+      </li>
+    </ul>
+  </div>
+  <div class="flex flex-column">
+    <div class="text-center mt-3 mb-3 text-xl">Current Standings</div>
+    <app-leaderboard></app-leaderboard>
+  </div>
+</div>

@@ -161,6 +161,7 @@ export class CurrentFormComponent implements OnInit {
   ngOnInit(): void {}
 
   getFavorite(event: EspnEvent): Competitor {
+    console.log('event', event);
     return event.odds.details.includes(event.competitors[0].abbreviation)
       ? event.competitors[0]
       : event.competitors[1];

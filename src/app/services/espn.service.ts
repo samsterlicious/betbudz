@@ -32,9 +32,9 @@ export class EspnService {
     const spreadTeam = details.details.replace(/\s+.+$/, '');
     const spread = parseFloat(details.details.replace(/\w+\s+/, ''));
     if (home === spreadTeam) {
-      return spread * -1;
-    } else {
       return spread;
+    } else {
+      return spread * -1;
     }
   }
 
