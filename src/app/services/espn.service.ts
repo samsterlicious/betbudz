@@ -24,6 +24,9 @@ export class EspnService {
     this.weekMap.set('7', '20221020-20221024');
     this.weekMap.set('8', '20221027-20221031');
     this.weekMap.set('9', '20221103-20221107');
+    this.weekMap.set('10', '20221110-20221114');
+    this.weekMap.set('11', '20221117-20221121');
+    this.weekMap.set('12', '20221124-20221128');
   }
 
   getSpread(details: { shortName: string; details: string }): number {

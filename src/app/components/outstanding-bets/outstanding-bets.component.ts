@@ -86,10 +86,12 @@ export class OutstandingBetsComponent implements OnInit {
               this.spinner.turnOff();
               let total = 0;
               for (const bet of resp.bets) {
-                if (bet.winner === resp.email) {
-                  total += bet.amount;
-                } else {
-                  total -= bet.amount;
+                if (bet.winner) {
+                  if (bet.winner === resp.email) {
+                    total += bet.amount;
+                  } else {
+                    total -= bet.amount;
+                  }
                 }
               }
               this.total = total;
