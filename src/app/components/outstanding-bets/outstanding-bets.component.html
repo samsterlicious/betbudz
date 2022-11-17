@@ -7,6 +7,15 @@
         optionLabel="name"
         (ngModelChange)="handleWeekChange($event)"
       ></p-dropdown>
+      <ng-container *ngIf="userService.user$ | async as adminUser">
+        <p-button
+          *ngIf="adminUser.email === 'keithmcg7@gmail.com'"
+          (click)="seeAll()"
+          class="align-self-end"
+          [label]="admin ? 'Turn off All' : 'See All'"
+          styleClass="p-button-sm"
+        ></p-button>
+      </ng-container>
     </div>
     <div
       *ngIf="oweTally$ | async as oweTally"
@@ -21,17 +30,31 @@
           [class.bg-green-200]="tallyRow.amOwed"
           [class.bg-red-200]="!tallyRow.amOwed"
         >
-          <span *ngIf="tallyRow.amOwed">
-            <b>{{ tallyRow.player }}</b> owes you {{ tallyRow.amount }}
-          </span>
-          <span *ngIf="!tallyRow.amOwed">
-            You owe <b>{{ tallyRow.player }}</b> {{ tallyRow.amount }}
-          </span>
+          <ng-container *ngIf="admin">
+            <span *ngIf="tallyRow.amOwed">
+              <b>{{ tallyRow.ogPlayer }}</b> owed from
+              <b>{{ tallyRow.player }}</b> {{ tallyRow.amount }}
+            </span>
+            <span *ngIf="!tallyRow.amOwed">
+              {{ tallyRow.ogPlayer }} owes<b>{{ tallyRow.player }}</b>
+              {{ tallyRow.amount }}
+            </span>
+          </ng-container>
+          <ng-container *ngIf="!admin">
+            <span *ngIf="tallyRow.amOwed">
+              <b>{{ tallyRow.player }}</b> owes you {{ tallyRow.amount }}
+            </span>
+            <span *ngIf="!tallyRow.amOwed">
+              You owe <b>{{ tallyRow.player }}</b> {{ tallyRow.amount }}
+            </span>
+          </ng-container>
         </div>
       </div>
     </div>
     <div class="flex flex-row flex-1 mt-2">
-      <div class="flex-1 text-center font-bold">My Bets</div>
+      <div class="flex-1 text-center font-bold">
+        {{ admin ? "First guy" : "My Bets" }}
+      </div>
       <div
         class="flex flex-column w-6rem text-center justify-content-center font-bold spread"
       >
@@ -47,47 +70,81 @@
         <div class="hidden lg:inline-flex lg:flex-1">
           <div
             class="justify-content-start flex-1 flex flex-row border-round-sm surface-200 border-400 border-1 p-2"
-            [class.bg-green-400]="didIWin(bet, viewModel.user.email!)"
-            [class.bg-red-300]="didILose(bet, viewModel.user.email!)"
+            [class.bg-green-400]="
+              didIWin(bet, admin ? bet.personOne : viewModel.user.email!)
+            "
+            [class.bg-red-300]="
+              didILose(bet, admin ? bet.personOne : viewModel.user.email!)
+            "
           >
             <div class="flex-1 flex flex-column justify-content-center">
               <img
                 width="50"
                 height="50"
-                [src]="getImg(bet, viewModel.user.email!, true)"
+                [src]="
+                  getImg(
+                    bet,
+                    admin ? bet.personOne : viewModel.user.email!,
+                    true
+                  )
+                "
               />
             </div>
 
             <div
               class="text-left lex-2 ml-3 xl:mr-1 flex flex-column justify-content-center"
             >
-              {{ getMe(bet, viewModel.user.email!, true, false) }}
+              {{
+                getMe(
+                  bet,
+                  admin ? bet.personOne : viewModel.user.email!,
+                  admin ? false : true,
+                  false
+                )
+              }}
             </div>
 
             <div
               class="flex-1 flex text-right xl:mr-1 flex-column justify-content-center font-bold text-lg"
             >
-              {{ getMySpread(bet, viewModel.user.email!) }}
+              {{
+                getMySpread(bet, admin ? bet.personOne : viewModel.user.email!)
+              }}
             </div>
           </div>
         </div>
         <div
           class="lg:hidden flex-1 flex flex-column border-round-sm surface-200 border-400 border-1 p-2 justify-content-center"
-          [class.bg-green-400]="didIWin(bet, viewModel.user.email!)"
-          [class.bg-red-300]="didILose(bet, viewModel.user.email!)"
+          [class.bg-green-400]="
+            didIWin(bet, admin ? bet.personTwo : viewModel.user.email!)
+          "
+          [class.bg-red-300]="
+            didILose(bet, admin ? bet.personTwo : viewModel.user.email!)
+          "
         >
           <div class="flex flex-row justify-content-center">
             <img
               width="50"
               height="50"
-              [src]="getImg(bet, viewModel.user.email!, true)"
+              [src]="
+                getImg(bet, admin ? bet.personTwo : viewModel.user.email!, true)
+              "
             />
           </div>
           <div class="flex-1 text-center">
-            {{ getMe(bet, viewModel.user.email!, true, true) }}
+            {{
+              getMe(
+                bet,
+                admin ? bet.personTwo : viewModel.user.email!,
+                true,
+                true
+              )
+            }}
           </div>
           <div class="text-center mt-2">
-            {{ getMySpread(bet, viewModel.user.email!) }}
+            {{
+              getMySpread(bet, admin ? bet.personTwo : viewModel.user.email!)
+            }}
           </div>
         </div>
         <div
@@ -103,14 +160,27 @@
               <img
                 width="50"
                 height="50"
-                [src]="getImg(bet, viewModel.user.email!, false)"
+                [src]="
+                  getImg(
+                    bet,
+                    admin ? bet.personTwo : viewModel.user.email!,
+                    false
+                  )
+                "
               />
             </div>
 
             <div
               class="text-left lex-2 ml-3 xl:mr-1 flex flex-column justify-content-center"
             >
-              {{ getMe(bet, viewModel.user.email!, false, false) }}
+              {{
+                getMe(
+                  bet,
+                  admin ? bet.personTwo : viewModel.user.email!,
+                  false,
+                  false
+                )
+              }}
             </div>
             <div
               class="flex-1 flex text-right xl:mr-1 flex-column justify-content-center font-bold text-lg"

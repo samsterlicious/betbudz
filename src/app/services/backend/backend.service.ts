@@ -75,7 +75,8 @@ export class BackendService {
   }
 
   getOutstandingBets(
-    week: string
+    week: string,
+    admin?: boolean
   ): Observable<{ bets: Bet[]; email: string; oweTally: OweTally[] }> {
     const params: any = {};
     if (getCurrentWeek() === week) {
@@ -97,6 +98,7 @@ export class BackendService {
                   email: user.email!,
                   week,
                   ...params,
+                  ...(admin && { admin: true }),
                 },
               }
             )
@@ -217,6 +219,7 @@ type GetBetEndpointResponse = {
 };
 
 export type OweTally = {
+  ogPlayer?: string;
   amount: number;
   player: string;
   amOwed: boolean;

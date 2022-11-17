@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from '@auth0/auth0-angular';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import {
@@ -19,7 +19,6 @@ import { SpinnerService } from 'src/app/services/spinner/spinner.service';
 import { UserStore } from 'src/app/store/user.store';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-outstanding-bets',
   templateUrl: './outstanding-bets.component.html',
   styleUrls: ['./outstanding-bets.component.scss'],
@@ -37,16 +36,20 @@ export class OutstandingBetsComponent implements OnInit {
   total: number = 0;
 
   oweTallySubject: Subject<
-    { amount: number; player: string; amOwed: boolean }[] | undefined
+    | { ogPlayer?: string; amount: number; player: string; amOwed: boolean }[]
+    | undefined
   >;
   oweTally$: Observable<
-    { amount: number; player: string; amOwed: boolean }[] | undefined
+    | { ogPlayer?: string; amount: number; player: string; amOwed: boolean }[]
+    | undefined
   >;
   oweTally?: OweTally[];
 
+  admin = false;
+
   constructor(
     private messageService: MessageService,
-    private userService: UserStore,
+    public userService: UserStore,
     private api: BackendService,
     private confirmationService: ConfirmationService,
     private spinner: SpinnerService,
@@ -76,7 +79,7 @@ export class OutstandingBetsComponent implements OnInit {
       outstanding: this.weekSubject.asObservable().pipe(
         tap(() => this.spinner.turnOn()),
         mergeMap((week) =>
-          this.api.getOutstandingBets(week).pipe(
+          this.api.getOutstandingBets(week, this.admin).pipe(
             tap((resp) => {
               if (resp.oweTally) {
                 this.oweTally = resp.oweTally;
@@ -127,6 +130,13 @@ export class OutstandingBetsComponent implements OnInit {
         ? `assets/nfl_logos/${bet.personTwoTeam}.png`
         : `assets/nfl_logos/${bet.personOneTeam}.png`;
     }
+  }
+
+  seeAll() {
+    if (this.admin) this.admin = false;
+    else this.admin = true;
+
+    this.handleWeekChange(this.week);
   }
 
   handleWeekChange(week: SelectItem) {
