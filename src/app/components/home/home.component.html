@@ -1,21 +1,41 @@
-<div class="flex flex-column lg:flex-row">
-  <div class="flex-1 text-xl">
-    <ul>
-      <li>Pick your team, add your wager amounts.</li>
-      <li>
-        We'll find someone betting the opposite side and match you up.
-        <b>No Fees, No Vigs.</b>
-      </li>
-      <li>Spreads updated every Tuesday Morning.</li>
-      <li>Thursday Night Picks lock Wednesday at 11:59 PM PST.</li>
-      <li>
-        All other games lock on Friday at 11:59 PM PST, and your matchups will
-        update in the "Current Bets" Section.
-      </li>
-    </ul>
+<div class="grid grid-nogutter surface-section text-800">
+  <div
+    class="col-12 md:col-6 p-2 lg:p-8 text-center md:text-left flex align-items-center"
+  >
+    <section>
+      <img src="assets/logos/betbuds-banner.png" class="w-11 md:12 mb-2" />
+      <span class="block text-6xl font-bold mb-1"
+        >Pick Your Teams, Add Your Wager</span
+      >
+      <div class="text-6xl text-primary font-bold mb-3">No Fees, No Vigs</div>
+      <p class="mt-0 mb-4 text-700 line-height-3">
+        Spreads updated every Tuesday Morning. Picks lock night before games.
+      </p>
+
+      <button
+        pButton
+        pRipple
+        label="Make Picks"
+        type="button"
+        class="mr-3 p-button-rounded"
+        routerLink="/bets/current"
+      ></button>
+      <button
+        pButton
+        pRipple
+        label="View Bets"
+        type="button"
+        class="p-button-outlined p-button-rounded"
+        routerLink="/bets/past"
+      ></button>
+    </section>
   </div>
-  <div class="flex flex-column">
-    <div class="text-center mt-3 mb-3 text-xl">Current Standings</div>
-    <app-leaderboard></app-leaderboard>
+  <div class="col-12 md:col-6 overflow-hidden hidden md:inline-flex">
+    <img
+      src="assets/logos/cover.jpg"
+      alt="Image"
+      class="md:ml-auto block md:h-full w-12"
+      style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)"
+    />
   </div>
 </div>
