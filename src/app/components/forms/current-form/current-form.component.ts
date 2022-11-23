@@ -46,7 +46,7 @@ export class CurrentFormComponent implements OnInit {
 
   viewModel$: Observable<ViewModel>;
   mapSubject: BehaviorSubject<Map<string, boolean>>;
-  totalSubject = new BehaviorSubject<Total>({ amount: 0 });
+  totalSubject = new BehaviorSubject<Total>({ amount: '0.00' });
   total$ = this.totalSubject.asObservable();
 
   latestWeek = getCurrentWeek();
@@ -137,7 +137,7 @@ export class CurrentFormComponent implements OnInit {
                 total += parseFloat(pick.amount);
               }
               this.showinputMapSubject.next(this.showinputMap);
-              this.totalSubject.next({ amount: total });
+              this.totalSubject.next({ amount: total.toFixed(2) });
               this.spinner.turnOff();
             }),
             map((resp) => resp.events),
@@ -207,7 +207,7 @@ export class CurrentFormComponent implements OnInit {
         teamPickSet.delete(entry[0].replace(/#.+$/, ''));
         totalWager += parseFloat(entry[1]);
         picks.push({
-          amount: entry[1],
+          amount: parseFloat(entry[1]).toFixed(2),
           game: entry[0].replace(/^.+#/, ''),
           team: entry[0].replace(/#.+$/, ''),
         });
@@ -216,7 +216,7 @@ export class CurrentFormComponent implements OnInit {
 
     for (const oldPick of teamPickSet.keys()) {
       picks.push({
-        amount: '0',
+        amount: '0.00',
         game: 'sam',
         team: oldPick,
         shouldDelete: true,
@@ -254,7 +254,7 @@ export class CurrentFormComponent implements OnInit {
     for (const amount of this.betAmount.values()) {
       if (amount) total += parseFloat(amount);
     }
-    this.totalSubject.next({ amount: total });
+    this.totalSubject.next({ amount: total.toFixed(2) });
   }
 
   handleSelectEvent(selectEvent: SelectEventEvent) {
@@ -300,7 +300,7 @@ type ViewModel = {
 };
 
 type Total = {
-  amount: number;
+  amount: string;
 };
 
 export function getCurrentWeek(): string {

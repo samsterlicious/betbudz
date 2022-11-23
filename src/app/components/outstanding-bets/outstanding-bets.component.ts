@@ -9,12 +9,14 @@ import {
   Observable,
   Subject,
   tap,
+  timer,
 } from 'rxjs';
 import {
   BackendService,
   Bet,
   OweTally,
 } from 'src/app/services/backend/backend.service';
+import { EspnEvent, EspnService } from 'src/app/services/espn.service';
 import { SpinnerService } from 'src/app/services/spinner/spinner.service';
 import { UserStore } from 'src/app/store/user.store';
 
@@ -53,6 +55,7 @@ export class OutstandingBetsComponent implements OnInit {
     private api: BackendService,
     private confirmationService: ConfirmationService,
     private spinner: SpinnerService,
+    private espn: EspnService,
     private serv: BackendService
   ) {
     this.weekSubject = new BehaviorSubject<string>(getCurrentWeek());
@@ -67,6 +70,10 @@ export class OutstandingBetsComponent implements OnInit {
     this.oweTally$ = this.oweTallySubject.asObservable();
 
     this.viewModel$ = combineLatest({
+      espnEvents: timer(0, 600000).pipe(
+        mergeMap(() => this.weekSubject.asObservable()),
+        mergeMap((week) => this.espn.getGamesByWeek(week))
+      ),
       names: this.userService.getUsers().pipe(
         map((users) => {
           const map: any = {};
@@ -86,7 +93,7 @@ export class OutstandingBetsComponent implements OnInit {
               } else {
                 this.oweTally = undefined;
               }
-              this.spinner.turnOff();
+
               let total = 0;
               for (const bet of resp.bets) {
                 if (bet.winner) {
@@ -114,13 +121,64 @@ export class OutstandingBetsComponent implements OnInit {
         }
         console.log('that next tho', this.oweTally);
         this.oweTallySubject.next(this.oweTally);
+      }),
+      map((resp) => {
+        const eventMap: { [key: string]: EspnEvent } = {};
+        for (const event of resp.espnEvents) {
+          if (event.fullStatus.type.completed)
+            eventMap[event.shortName] = event;
+        }
+
+        for (const bet of resp.outstanding) {
+          const event = eventMap[bet.game];
+
+          if (event) {
+            let team1 = event.competitors[0];
+            let team2 = event.competitors[1];
+
+            let team1Score = parseInt(team1.score);
+            let team2Score = parseInt(team2.score);
+
+            const awayTeam = bet.game.replace(/^(\w{3,4})\s.+$/, '$1');
+            const homeTeam = bet.game.replace(/^.+(\w{3,4})$/, '$1');
+            if (team1.abbreviation === awayTeam) {
+              team1Score += parseFloat(bet.spread);
+            } else {
+              team1Score -= parseFloat(bet.spread);
+            }
+
+            if (team1Score > team2Score) {
+              bet.procd = true;
+              if (team1.abbreviation === bet.personOneTeam) {
+                bet.winner = bet.personOne;
+              } else {
+                bet.winner = bet.personTwo;
+              }
+            } else if (team1Score < team2Score) {
+              bet.procd = true;
+              if (team1.abbreviation === bet.personOneTeam) {
+                bet.winner = bet.personTwo;
+              } else {
+                bet.winner = bet.personOne;
+              }
+            }
+          }
+        }
+        this.spinner.turnOff();
+        return resp;
       })
     );
   }
 
   ngOnInit(): void {}
 
-  getImg(bet: Bet, email: string, isMe: boolean): string {
+  getImg(bet: Bet, email: string, isMe: boolean, adminFlag?: boolean): string {
+    console.log('adminFlag', adminFlag, email, bet);
+    if (adminFlag) {
+      if (email === bet.personOne)
+        return `assets/nfl_logos/${bet.personOneTeam}.png`;
+      return `assets/nfl_logos/${bet.personTwoTeam}.png`;
+    }
     if (bet.personOne === email) {
       return isMe
         ? `assets/nfl_logos/${bet.personOneTeam}.png`
@@ -255,6 +313,7 @@ export class OutstandingBetsComponent implements OnInit {
 }
 
 type ViewModel = {
+  espnEvents: EspnEvent[];
   outstanding: Bet[];
   user: User;
 };

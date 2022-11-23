@@ -51,7 +51,7 @@
     </div>
   </div>
   <div *ngIf="total$ | async as total" class="mb-2 font-bold">
-    Current total: {{ total.amount }}.00
+    Current total: {{ total.amount }}
   </div>
   <p-button
     *ngIf="submitButton$ | async"

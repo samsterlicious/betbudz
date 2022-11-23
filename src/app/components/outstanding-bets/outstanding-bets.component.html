@@ -85,7 +85,8 @@
                   getImg(
                     bet,
                     admin ? bet.personOne : viewModel.user.email!,
-                    true
+                    true,
+                    admin
                   )
                 "
               />
@@ -127,7 +128,12 @@
               width="50"
               height="50"
               [src]="
-                getImg(bet, admin ? bet.personTwo : viewModel.user.email!, true)
+                getImg(
+                  bet,
+                  admin ? bet.personTwo : viewModel.user.email!,
+                  true,
+                  admin
+                )
               "
             />
           </div>
@@ -136,7 +142,7 @@
               getMe(
                 bet,
                 admin ? bet.personTwo : viewModel.user.email!,
-                true,
+                admin ? false : true,
                 true
               )
             }}
@@ -164,7 +170,8 @@
                   getImg(
                     bet,
                     admin ? bet.personTwo : viewModel.user.email!,
-                    false
+                    false,
+                    admin
                   )
                 "
               />
@@ -199,13 +206,22 @@
             <img
               width="50"
               height="50"
-              [src]="getImg(bet, viewModel.user.email!, false)"
+              [src]="
+                getImg(
+                  bet,
+                  admin ? bet.personTwo : viewModel.user.email!,
+                  false,
+                  admin
+                )
+              "
             />
           </div>
         </div>
       </div>
 
-      <div class="flex flex-row flex-1 mt-3 justify-content-center">
+      <div
+        class="text-lg and font-bold flex flex-row flex-1 mt-3 justify-content-center"
+      >
         <div>Bet Results Total: {{ total }}</div>
       </div>
     </ng-container>
