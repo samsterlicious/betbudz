@@ -125,12 +125,13 @@ export class OutstandingBetsComponent implements OnInit {
       map((resp) => {
         const eventMap: { [key: string]: EspnEvent } = {};
         for (const event of resp.espnEvents) {
-          if (event.fullStatus.type.completed)
+          if (event.fullStatus.type.completed) {
             eventMap[event.shortName] = event;
+          }
         }
 
         for (const bet of resp.outstanding) {
-          const event = eventMap[bet.game];
+          const event = eventMap[bet.game.replace(/^[^#]+#([^#]+)#.+$/, '$1')];
 
           if (event) {
             let team1 = event.competitors[0];
@@ -173,7 +174,6 @@ export class OutstandingBetsComponent implements OnInit {
   ngOnInit(): void {}
 
   getImg(bet: Bet, email: string, isMe: boolean, adminFlag?: boolean): string {
-    console.log('adminFlag', adminFlag, email, bet);
     if (adminFlag) {
       if (email === bet.personOne)
         return `assets/nfl_logos/${bet.personOneTeam}.png`;
@@ -222,7 +222,6 @@ export class OutstandingBetsComponent implements OnInit {
     const gameInfo = bet.game.replace(/^[^#]+#([^#]+)#.+$/, '$1');
     const homeTeam = gameInfo.replace(/\w+\s+@\s+/, '');
     let spread = 0;
-    console.log('sam', bet, email);
     if (bet.personOne === email) {
       if (bet.personOneTeam === homeTeam) {
         spread = parseFloat(bet.spread) * -1;
@@ -252,7 +251,6 @@ export class OutstandingBetsComponent implements OnInit {
     return false;
   }
   resolve(bet: Bet, email?: string): void {
-    console.log(bet.personOne === email || bet.personTwo === email);
     if (bet.personOne === email || bet.personTwo === email) {
       if (bet.winner === email) {
         //mark recvd

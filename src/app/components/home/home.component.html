@@ -1,41 +1,38 @@
-<div class="grid grid-nogutter surface-section text-800">
+<div class="flex flex-row surface-section text-800 justify-content-center">
   <div
-    class="col-12 md:col-6 p-2 lg:p-8 text-center md:text-left flex align-items-center"
+    class="p-2 lg:p-8 text-center md:text-left flex align-items-center text-center"
   >
     <section>
       <img src="assets/logos/betbuds-banner.png" class="w-11 md:12 mb-2" />
-      <span class="block text-6xl font-bold mb-1"
+      <span class="text-center block text-6xl font-bold mb-1"
         >Pick Your Teams, Add Your Wager</span
       >
-      <div class="text-6xl text-primary font-bold mb-3">No Fees, No Vigs</div>
-      <p class="mt-0 mb-4 text-700 line-height-3">
+      <div class="text-center text-6xl text-primary font-bold mb-3">
+        No Fees, No Vigs
+      </div>
+      <p class="text-center mt-0 mb-4 text-700 line-height-3">
         Spreads updated every Tuesday Morning. Picks lock night before games.
       </p>
-
-      <button
-        pButton
-        pRipple
-        label="Make Picks"
-        type="button"
-        class="mr-3 p-button-rounded"
-        routerLink="/bets/current"
-      ></button>
-      <button
-        pButton
-        pRipple
-        label="View Bets"
-        type="button"
-        class="p-button-outlined p-button-rounded"
-        routerLink="/bets/past"
-      ></button>
+      <div
+        class="full-width flex flex-row justify-content-center align-items-center"
+      >
+        <button
+          pButton
+          pRipple
+          label="Make Picks"
+          type="button"
+          class="mr-3 p-button-rounded"
+          routerLink="/bets/current"
+        ></button>
+        <button
+          pButton
+          pRipple
+          label="View Bets"
+          type="button"
+          class="p-button-outlined p-button-rounded"
+          routerLink="/bets/past"
+        ></button>
+      </div>
     </section>
-  </div>
-  <div class="col-12 md:col-6 overflow-hidden hidden md:inline-flex">
-    <img
-      src="assets/logos/cover.jpg"
-      alt="Image"
-      class="md:ml-auto block md:h-full w-12"
-      style="clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%)"
-    />
   </div>
 </div>
