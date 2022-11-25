@@ -20,7 +20,7 @@ export class MainComponent implements OnInit {
     {
       label: 'Sign out',
       command: () => {
-        this.auth.logout();
+        this.auth.logout({ returnTo: 'https://betbuds.org' });
       },
     },
   ];

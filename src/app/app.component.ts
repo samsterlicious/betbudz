@@ -10,7 +10,7 @@ import { BetUser, UserStore } from './store/user.store';
 })
 export class AppComponent {
   auth0User$: Observable<BetUser>;
-  title = 'betbudz';
+  title = 'BetBuds';
   constructor(userStore: UserStore) {
     this.auth0User$ = userStore.auth0User$;
   }

@@ -75,7 +75,8 @@ export class TeamComponent implements OnInit {
       (currentDate.weekday === 2 ||
         currentDate.weekday === 3 ||
         currentDate.weekday === 4 ||
-        currentDate.weekday === 5)
+        currentDate.weekday === 5 ||
+        currentDate.weekday === 6)
     )
       return false;
     return true;
