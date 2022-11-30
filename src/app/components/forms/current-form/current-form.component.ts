@@ -71,7 +71,7 @@ export class CurrentFormComponent implements OnInit {
     this.showinputMap = new Map();
     this.mapSubject = new BehaviorSubject(this.showinputMap);
 
-    this.lateDay = new Date().getDay() >= 6;
+    this.lateDay = new Date().getDay() == 0;
     this.week = { name: `Week ${this.latestWeek}`, code: this.latestWeek };
     this.weeks = [...Array(parseInt(this.latestWeek)).keys()].map((i) => ({
       code: String(i + 1),
