@@ -67,7 +67,9 @@ export class TeamComponent implements OnInit {
     if (diffDays > 5) return true;
     if (
       date.weekday === 4 &&
-      (currentDate.weekday === 2 || currentDate.weekday === 3)
+      (currentDate.weekday === 2 ||
+        currentDate.weekday === 3 ||
+        (currentDate.weekday === 4 && date.hour > currentDate.hour))
     )
       return false;
     if (
