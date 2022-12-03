@@ -18,6 +18,9 @@ export class TeamComponent implements OnInit {
   @Input()
   betAmount!: Map<string, string>;
 
+  @Input()
+  isFavorite!: boolean;
+
   @Output()
   betEvent = new EventEmitter<BetEvent>();
 
@@ -56,6 +59,15 @@ export class TeamComponent implements OnInit {
     return `assets/nfl_logos/${teamName}.png`;
   }
 
+  getSpread(): string {
+    const spread = this.event.odds.spread;
+    console.log(spread, this.isFavorite);
+    if (spread > 0 && this.isFavorite) return String(spread * -1);
+    if (spread < 0 && !this.isFavorite) return `+${spread * -1}`;
+    if (spread > 0) return `+${spread}`;
+    return String(spread);
+  }
+
   isDisabled(): boolean {
     if (this.oldWeek) return true;
     const date = DateTime.fromJSDate(this.event.date, { zone: 'est' });
@@ -64,6 +76,12 @@ export class TeamComponent implements OnInit {
     const diff = Interval.fromDateTimes(date, currentDate);
     const diffDays = diff.length('days');
     console.log('currentDate.day ', currentDate.weekday);
+    if (
+      date.weekday === 1 &&
+      currentDate.weekday === 1 &&
+      date.hour <= currentDate.hour
+    )
+      return true;
     if (diffDays > 5) return true;
     if (
       date.weekday === 4 &&

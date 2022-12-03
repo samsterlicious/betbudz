@@ -123,6 +123,7 @@ export class OutstandingBetsComponent implements OnInit {
         this.oweTallySubject.next(this.oweTally);
       }),
       map((resp) => {
+        let total = 0;
         const eventMap: { [key: string]: EspnEvent } = {};
         for (const event of resp.espnEvents) {
           if (event.fullStatus.type.completed) {
@@ -163,8 +164,16 @@ export class OutstandingBetsComponent implements OnInit {
                 bet.winner = bet.personOne;
               }
             }
+            if (bet.winner) {
+              if (bet.winner === resp.user.email) {
+                total += bet.amount;
+              } else {
+                total -= bet.amount;
+              }
+            }
           }
         }
+        this.total = total;
         this.spinner.turnOff();
         return resp;
       })

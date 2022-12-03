@@ -224,7 +224,7 @@ export class CurrentFormComponent implements OnInit {
     }
 
     this.confirmationService.confirm({
-      message: `Are you sure that you want to wager $${totalWager}?`,
+      message: `Are you sure that you want to wager ${totalWager}?`,
       accept: () => {
         this.spinner.turnOn();
         this.backend

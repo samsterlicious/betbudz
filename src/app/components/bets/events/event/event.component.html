@@ -10,12 +10,11 @@
       (betEvent)="setBet($event)"
       (clickedTeamEvent)="clickTeam($event)"
       [oldWeek]="oldWeek"
+      [isFavorite]="true"
     ></app-team>
     <div
       class="flex flex-column w-4rem text-center justify-content-center font-bold text-lg spread"
-    >
-      {{ getSpread(event!.odds.spread) }}
-    </div>
+    ></div>
     <app-team
       class="flex-1"
       [betAmount]="betAmount"
@@ -26,6 +25,7 @@
       [oldWeek]="oldWeek"
       (betEvent)="setBet($event)"
       (clickedTeamEvent)="clickTeam($event)"
+      [isFavorite]="false"
     ></app-team>
   </div>
 </div>

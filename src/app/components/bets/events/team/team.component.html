@@ -24,6 +24,11 @@
         {{ team.homeAway | titlecase }}
       </div>
     </div>
+    <div
+      class="flex-1 flex flex-column justify-content-center text-right text-lg font-bold"
+    >
+      {{ getSpread() }}
+    </div>
   </div>
   <div class="p-inputgroup" *ngIf="selected">
     <span class="p-inputgroup-addon">Wager</span>
