@@ -42,7 +42,7 @@ export class UserStore {
                 .pipe(
                   map((betUser) => ({
                     ...betUser,
-                    email: 'keithmcg7@gmail.com', // auth0User!.email! ,
+                    email: auth0User!.email!,
                   }))
                 )
             )
